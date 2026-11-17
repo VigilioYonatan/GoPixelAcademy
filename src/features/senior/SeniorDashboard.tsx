@@ -365,6 +365,7 @@ export function SeniorDashboard({
 
           return (
             <a class="senior-card senior-card-v2" key={x.id} href={`#/senior/${x.id}`}>
+              <span class="level-ghost-num" aria-hidden="true">{x.id.replace('S', '')}</span>
               <div class="senior-card-badge-row">
                 <span class="senior-gate-badge">
                   <b class="gate-id">{x.id}</b>

@@ -35,6 +35,16 @@ import fr from '../i18n/fr.json';
 import { goExamples, lessonGuides } from '../data/learning-exercises';
 import { frameworkCurriculum } from '../data/frameworks-curriculum';
 import { gameBank } from '../data/learning-games';
+import {
+  PixelHomeIcon,
+  PixelBookIcon,
+  PixelGamesIcon,
+  PixelLayersIcon,
+  PixelCrownIcon,
+  PixelSunIcon,
+  PixelMoonIcon,
+  PixelSettingsIcon,
+} from '../components/PixelNavIcons';
 
 type Locale = 'es' | 'en' | 'ja' | 'zh' | 'pt' | 'fr';
 type Theme = 'dark' | 'light';
@@ -122,13 +132,40 @@ export function App() {
    <header class="site-header">
     <a class="brand" href="#/" aria-label="GoPixel Academy"><img src={asset('favicon.png')} alt="" width="36" height="36"/><span>Go<span class="brand-cyan">Pixel</span><small>ACADEMY</small></span></a>
     <nav class="primary-nav" aria-label="Main navigation">
-      {(['home','learn','games','frameworks','senior'] as const).map(k=><a href={`#/${k==='home'?'':k}`} class={hasRoute(k)?'active':''}><Icon name={{home:'home',learn:'book',games:'quiz',frameworks:'framework',senior:'crown'}[k]} size={18}/><span>{t(k)}</span></a>)}
+      <a href="#/" class={hasRoute('home') ? 'active' : ''}>
+        <PixelHomeIcon size={16} />
+        <span>{t('home')}</span>
+      </a>
+      <a href="#/learn" class={hasRoute('learn') ? 'active' : ''}>
+        <PixelBookIcon size={16} />
+        <span>{t('learn')}</span>
+      </a>
+      <a href="#/games" class={hasRoute('games') ? 'active' : ''}>
+        <PixelGamesIcon size={16} />
+        <span>{t('games')}</span>
+      </a>
+      <a href="#/frameworks" class={hasRoute('frameworks') ? 'active' : ''}>
+        <PixelLayersIcon size={16} />
+        <span>{t('frameworks')}</span>
+      </a>
+      <a href="#/senior" class={hasRoute('senior') ? 'active' : ''}>
+        <PixelCrownIcon size={16} />
+        <span>{t('senior')}</span>
+      </a>
     </nav>
     <div class="header-actions">
       <label class="lang-wrap"><span class="visually-hidden">{t('language')}</span><select aria-label={t('language')} value={prefs.locale} onChange={e=>update({locale:(e.currentTarget as HTMLSelectElement).value as Locale})}>{locales.map(l=><option value={l.id}>{l.flag} {l.label}</option>)}</select></label>
-      <button type="button" class="circle-action" title={t('theme')} aria-label={t('theme')} onClick={()=>update({theme:prefs.theme==='dark'?'light':'dark'})}><Icon name={prefs.theme==='dark'?'sun':'moon'} size={19}/></button>
-      <button type="button" class={`senior-toggle ${prefs.seniorEnabled?'on':''}`} aria-pressed={prefs.seniorEnabled} onClick={()=>update({seniorEnabled:!prefs.seniorEnabled})}><Icon name="crown" size={18}/><span>{t('senior')}</span><span class="toggle-knob"/></button>
-      <a class="circle-action settings-action" href="#/settings" title={t('settings')} aria-label={t('settings')}><Icon name="settings" size={18}/></a>
+      <button type="button" class="circle-action" title={t('theme')} aria-label={t('theme')} onClick={()=>update({theme:prefs.theme==='dark'?'light':'dark'})}>
+        {prefs.theme === 'dark' ? <PixelSunIcon size={18} /> : <PixelMoonIcon size={18} />}
+      </button>
+      <button type="button" class={`senior-toggle ${prefs.seniorEnabled?'on':''}`} aria-pressed={prefs.seniorEnabled} onClick={()=>update({seniorEnabled:!prefs.seniorEnabled})}>
+        <PixelCrownIcon size={16} />
+        <span>{t('senior')}</span>
+        <span class="toggle-knob"/>
+      </button>
+      <a class="circle-action settings-action" href="#/settings" title={t('settings')} aria-label={t('settings')}>
+        <PixelSettingsIcon size={18} />
+      </a>
     </div>
    </header>
    <main id="main" class="main-content">

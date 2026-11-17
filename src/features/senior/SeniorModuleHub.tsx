@@ -239,7 +239,8 @@ export function SeniorModuleHub({
       <div class="senior-lab-grid">
         <div class="senior-lab-main">
           {/* Production Scenario Card */}
-          <section class="card">
+          <section class="card scenario-card">
+            <span class="level-ghost-num" aria-hidden="true">{m.id.replace('S', '')}</span>
             <div class="panel-title">
               <img class="pixel-icon" src={asset('icons/crown.svg')} width={20} height={20} alt="" aria-hidden="true" />
               <b>{t.scenarioTitle}</b>

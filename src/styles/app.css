@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
+@import './fonts.css';
 :root {
   font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   color-scheme: dark; font-synthesis: none;
@@ -468,3 +468,209 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   PIXEL SENIOR UX/UI SYSTEM
+   OFL Silkscreen auto-alojada + micro-animaciones stepped + crispEdges navbar
+   ========================================================================== */
+
+/* Tipografía Pixel Silkscreen en acentos, numerales y micro-etiquetas */
+.level-ghost-num,
+.gate-id,
+.senior-gate-badge b,
+.senior-stats span,
+.stats-strip strong,
+.intro-stat strong,
+.sr-score strong,
+.kpi-number,
+.radar-pct-text,
+.domain-score-chip b,
+.rubric-list li b,
+.filter-count,
+.senior-kind,
+.eyebrow,
+.page-kicker,
+.kicker,
+.sr-kicker,
+.game-challenge-badge,
+.tag,
+.capsule-badge,
+.gate-pill,
+.level-pill,
+.worker-metrics b,
+.capstone-flow span {
+  font-family: "Silkscreen", "JetBrains Mono", monospace;
+}
+
+/* Numerales de fondo / watermarks en tarjetas Senior */
+.senior-card-v2,
+.scenario-card,
+.senior-lab-main .card:first-child {
+  position: relative;
+  overflow: hidden;
+}
+
+.level-ghost-num {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-family: "Silkscreen", monospace !important;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--subtle);
+  opacity: 0.12;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  animation: pixelGhostPulse 3.6s steps(4, end) infinite;
+}
+
+.senior-card-v2:hover .level-ghost-num {
+  opacity: 0.28;
+  color: var(--gold);
+  transform: translateY(-2px);
+}
+
+:root[data-theme='light'] .level-ghost-num {
+  opacity: 0.10;
+  color: var(--go-dark);
+}
+
+:root[data-theme='light'] .senior-card-v2:hover .level-ghost-num {
+  opacity: 0.24;
+  color: #b8860b;
+}
+
+/* Micro-animación terminal / eyebrow con stepped blink */
+.eyebrow {
+  letter-spacing: 0.14em;
+}
+
+.eyebrow::after {
+  content: "_";
+  margin-left: 5px;
+  color: var(--go-light);
+  display: inline-block;
+  animation: pixelBlink 1.2s steps(2, end) infinite;
+}
+
+:root[data-senior='true'] .eyebrow::after {
+  color: var(--gold);
+}
+
+@keyframes pixelBlink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes pixelGhostPulse {
+  0%, 100% {
+    opacity: 0.12;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.24;
+    transform: translateY(-2px);
+  }
+}
+
+/* Iconografía Pixel-Art en Navbar (16x16 crispEdges) */
+.pixel-nav-icon {
+  flex: none;
+  display: inline-block;
+  vertical-align: middle;
+  shape-rendering: crispEdges;
+  transition: transform 0.16s steps(2, end);
+}
+
+.primary-nav a:hover .pixel-nav-icon,
+.primary-nav a.active .pixel-nav-icon,
+.circle-action:hover .pixel-nav-icon,
+.senior-toggle:hover .pixel-nav-icon {
+  transform: translateY(-1px) scale(1.12);
+}
+
+.senior-toggle.on .pixel-nav-icon {
+  animation: crownStepPulse 2.4s steps(4, end) infinite;
+}
+
+@keyframes crownStepPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(247,197,92,0));
+  }
+  50% {
+    transform: scale(1.14);
+    filter: drop-shadow(0 0 6px rgba(247,197,92,0.7));
+  }
+}
+
+/* Accesibilidad móvil WCAG AAA: Áreas táctiles >= 44px */
+.primary-nav a,
+.header-actions button,
+.header-actions a,
+.lang-wrap select,
+.senior-status-tab,
+.category-filter-btn {
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 720px) {
+  .primary-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 4px;
+  }
+  .primary-nav a {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 11px;
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .header-actions .circle-action,
+  .header-actions .senior-toggle {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Desactivación estricta de animación bajo modo reducido movimiento */
+:root[data-reduced-motion='true'] .level-ghost-num,
+:root[data-reduced-motion='true'] .pixel-nav-icon,
+:root[data-reduced-motion='true'] .eyebrow::after,
+:root[data-reduced-motion='true'] .senior-toggle.on .pixel-nav-icon,
+[data-motion="reduced"] .level-ghost-num,
+[data-motion="reduced"] .pixel-nav-icon,
+[data-motion="reduced"] .eyebrow::after,
+[data-motion="reduced"] .senior-toggle.on .pixel-nav-icon {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .level-ghost-num,
+  .pixel-nav-icon,
+  .eyebrow::after,
+  .senior-toggle.on .pixel-nav-icon {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
