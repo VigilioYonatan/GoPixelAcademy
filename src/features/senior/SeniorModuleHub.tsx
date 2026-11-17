@@ -19,6 +19,7 @@ type SeniorModuleHubProps = {
 const labels: Record<Locale, {
   scenarioTitle: string;
   notice: string;
+  gatesHeading: string;
   btnQuiz: string;
   btnEvidence: string;
   btnInvestigation: string;
@@ -44,11 +45,12 @@ const labels: Record<Locale, {
   es: {
     scenarioTitle: 'Escenario de producción',
     notice: 'Laboratorio de conocimientos: decisiones objetivas, evidencias de incidentes, revisión de código y reflexiones ADR. No compila Go en el navegador.',
-    btnQuiz: 'Cuestionario →',
-    btnEvidence: 'Laboratorio de evidencias →',
-    btnInvestigation: 'Investigación por etapas →',
-    btnOperations: 'Laboratorio operativo →',
-    btnReview: 'Revisar código Go →',
+    gatesHeading: '5 Quality Gates del módulo',
+    btnQuiz: 'Decisiones de arquitectura',
+    btnEvidence: 'Análisis de evidencias',
+    btnInvestigation: 'Investigación por etapas',
+    btnOperations: 'Incidente operativo',
+    btnReview: 'Revisión de código Go',
     btnGuide: 'Estudiar guía técnica →',
     btnNative: 'Práctica Go real (descarga) →',
     outcomesHeading: 'Lo que vas a investigar',
@@ -60,7 +62,7 @@ const labels: Record<Locale, {
     notEvaluated: 'Pendiente',
     passedBadge: 'Completado (100%)',
     failedBadge: 'Por revisar',
-    viewResult: 'Ver resultado ↗',
+    viewResult: 'Ir al primer gate →',
     nativeCardTitle: 'Laboratorio Go nativo',
     nativeCardDesc: 'Código fuente Go y pruebas unitarias descargables para ejecutar con go test localmente.',
     notFound: 'Módulo Senior no encontrado',
@@ -69,12 +71,13 @@ const labels: Record<Locale, {
   en: {
     scenarioTitle: 'Production Scenario',
     notice: 'Knowledge lab: objective decisions, incident evidence, code review, and ADR notes. Does not compile Go in the browser.',
-    btnQuiz: 'Quiz →',
-    btnEvidence: 'Evidence Lab →',
-    btnInvestigation: 'Step-by-step Investigation →',
-    btnOperations: 'Operations Lab →',
-    btnReview: 'Revisar código Go →',
-    btnGuide: 'Estudiar guía técnica →',
+    gatesHeading: 'Module 5 Quality Gates',
+    btnQuiz: 'Architecture Decisions',
+    btnEvidence: 'Evidence Analysis',
+    btnInvestigation: 'Step-by-step Investigation',
+    btnOperations: 'Operations Incident',
+    btnReview: 'Go Code Review',
+    btnGuide: 'Study technical guide →',
     btnNative: 'Native Go lab (download) →',
     outcomesHeading: 'What you will investigate',
     adrHeading: 'Architecture Decision Record · Technical Reflection',
@@ -85,7 +88,7 @@ const labels: Record<Locale, {
     notEvaluated: 'Pending',
     passedBadge: 'Completed (100%)',
     failedBadge: 'Needs review',
-    viewResult: 'View result ↗',
+    viewResult: 'Start first gate →',
     nativeCardTitle: 'Native Go Lab',
     nativeCardDesc: 'Authentic Go code and test suites to execute locally via go test.',
     notFound: 'Senior module not found',
@@ -94,12 +97,13 @@ const labels: Record<Locale, {
   ja: {
     scenarioTitle: '本番環境シナリオ',
     notice: '知識ラボ：客観的な判断、障害証拠、コードレビュー、ADR記録。ブラウザでGoをコンパイルしません。',
-    btnQuiz: '設問クイズ →',
-    btnEvidence: '証拠分析ラボ →',
-    btnInvestigation: '段階的調査 →',
-    btnOperations: '運用ラボ →',
-    btnReview: 'Revisar código Go →',
-    btnGuide: 'Estudiar guía técnica →',
+    gatesHeading: '5つの品質ゲート',
+    btnQuiz: 'アーキテクチャ判断',
+    btnEvidence: '証拠分析ラボ',
+    btnInvestigation: '段階的調査',
+    btnOperations: '運用インシデント対応',
+    btnReview: 'Go コードレビュー',
+    btnGuide: '技術ガイドを学ぶ →',
     btnNative: 'リアルGo実習（ダウンロード） →',
     outcomesHeading: '調査・学習のポイント',
     adrHeading: 'アーキテクチャ決定記録 (ADR)',
@@ -110,7 +114,7 @@ const labels: Record<Locale, {
     notEvaluated: '未完了',
     passedBadge: '合格 (100%)',
     failedBadge: '要見直し',
-    viewResult: '結果を見る ↗',
+    viewResult: '最初のゲートへ →',
     nativeCardTitle: 'ネイティブ Go ラボ',
     nativeCardDesc: 'ローカルで go test を実行するための本物の Go ソースコードとテスト群です。',
     notFound: 'シニアモジュールが見つかりません',
@@ -119,12 +123,13 @@ const labels: Record<Locale, {
   zh: {
     scenarioTitle: '生产场景描述',
     notice: '知识实验室：客观决策、现场证据分析、代码审查与 ADR 架构反思。不直接在浏览器中编译 Go 代码。',
-    btnQuiz: '技术决策问答 →',
-    btnEvidence: '证据分析实验室 →',
-    btnInvestigation: '分步技术调查 →',
-    btnOperations: '运维事件处理 →',
-    btnReview: 'Revisar código Go →',
-    btnGuide: 'Estudiar guía técnica →',
+    gatesHeading: '本模块 5 道质量关卡',
+    btnQuiz: '架构技术决策',
+    btnEvidence: '现场证据分析',
+    btnInvestigation: '分步根因调查',
+    btnOperations: '生产故障处置',
+    btnReview: 'Go 代码审查',
+    btnGuide: '阅读深度技术指南 →',
     btnNative: '原生 Go 实验（下载） →',
     outcomesHeading: '核心研究要点',
     adrHeading: '架构决策记录 (ADR) · 深度反思',
@@ -135,7 +140,7 @@ const labels: Record<Locale, {
     notEvaluated: '未完成',
     passedBadge: '已通过 (100%)',
     failedBadge: '需复查',
-    viewResult: '查看结果 ↗',
+    viewResult: '前往第一道关卡 →',
     nativeCardTitle: '原生 Go 实验包',
     nativeCardDesc: '包含真实的 Go 源码和自动化测试用例，供在本地环境中通过 go test 运行验证。',
     notFound: '未找到该 Senior 模块',
@@ -144,12 +149,13 @@ const labels: Record<Locale, {
   pt: {
     scenarioTitle: 'Cenário de produção',
     notice: 'Laboratório de conhecimento: decisões técnicas, análise de incidentes, code review e notas ADR. Sem compilar Go no navegador.',
-    btnQuiz: 'Questionário →',
-    btnEvidence: 'Laboratório de evidências →',
-    btnInvestigation: 'Investigação por etapas →',
-    btnOperations: 'Laboratório operacional →',
-    btnReview: 'Revisar código Go →',
-    btnGuide: 'Estudiar guía técnica →',
+    gatesHeading: '5 Quality Gates do módulo',
+    btnQuiz: 'Decisões de arquitetura',
+    btnEvidence: 'Análise de evidências',
+    btnInvestigation: 'Investigação por etapas',
+    btnOperations: 'Incidente operacional',
+    btnReview: 'Revisão de código Go',
+    btnGuide: 'Estudar guia técnico →',
     btnNative: 'Prática Go real (download) →',
     outcomesHeading: 'O que você vai investigar',
     adrHeading: 'Architecture Decision Record · Reflexão técnica',
@@ -160,7 +166,7 @@ const labels: Record<Locale, {
     notEvaluated: 'Pendente',
     passedBadge: 'Concluído (100%)',
     failedBadge: 'Rever',
-    viewResult: 'Ver resultado ↗',
+    viewResult: 'Ir ao primeiro gate →',
     nativeCardTitle: 'Laboratório Go nativo',
     nativeCardDesc: 'Código Go real e suíte de testes para executar com go test no seu computador.',
     notFound: 'Módulo Senior não encontrado',
@@ -169,12 +175,13 @@ const labels: Record<Locale, {
   fr: {
     scenarioTitle: 'Scénario de production',
     notice: 'Laboratoire de compétences : décisions d’architecture, analyse d’incidents, revue de code et notes ADR. Ne compile pas Go dans le navigateur.',
-    btnQuiz: 'Quiz de décisions →',
-    btnEvidence: 'Laboratoire de preuves →',
-    btnInvestigation: 'Investigation par étapes →',
-    btnOperations: 'Laboratoire opérationnel →',
-    btnReview: 'Revisar código Go →',
-    btnGuide: 'Estudiar guía técnica →',
+    gatesHeading: '5 Quality Gates du module',
+    btnQuiz: 'Décisions d’architecture',
+    btnEvidence: 'Analyse des preuves',
+    btnInvestigation: 'Investigation par étapes',
+    btnOperations: 'Incident opérationnel',
+    btnReview: 'Revue de code Go',
+    btnGuide: 'Étudier le guide technique →',
     btnNative: 'Pratique Go réelle (téléchargement) →',
     outcomesHeading: 'Objectifs d’investigation',
     adrHeading: 'Architecture Decision Record · Réflexion technique',
@@ -185,7 +192,7 @@ const labels: Record<Locale, {
     notEvaluated: 'En attente',
     passedBadge: 'Validé (100%)',
     failedBadge: 'À revoir',
-    viewResult: 'Voir le résultat ↗',
+    viewResult: 'Ouvrir le premier gate →',
     nativeCardTitle: 'Laboratoire Go natif',
     nativeCardDesc: 'Code source Go et tests automatisés à exécuter en local avec go test.',
     notFound: 'Module Senior introuvable',
@@ -222,53 +229,80 @@ export function SeniorModuleHub({
   const note = notes[moduleId] || '';
   const hasSimulator = ['S05', 'S07', 'S09', 'S10', 'S11', 'S18'].includes(moduleId);
 
+  const gates = [
+    { code: 'G1', label: t.btnQuiz, href: `#/senior/${moduleId}/decision-lab`, res: seniorResults[moduleId] },
+    { code: 'G2', label: t.btnEvidence, href: `#/senior/${moduleId}/evidence-lab`, res: evidenceResults[moduleId] },
+    { code: 'G3', label: t.btnInvestigation, href: `#/senior/${moduleId}/investigation-lab`, res: investigationResults[moduleId] },
+    { code: 'G4', label: t.btnOperations, href: `#/senior/${moduleId}/operations-lab`, res: operationsResults[moduleId] },
+    { code: 'G5', label: t.btnReview, href: `#/senior/${moduleId}/review-lab`, res: reviewResults[moduleId] },
+  ];
+
+  const passedGates = gates.filter(g => g.res?.passed).length;
+
   return (
     <div class="content-page senior-module-hub">
       <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href="#/senior">Senior</a>
+        <a href="#/senior">Senior Mode</a>
         <span>/</span>
         <b>{m.id}</b>
       </nav>
 
-      <div class="page-heading">
-        <span class="eyebrow small">SENIOR · {m.id}</span>
+      <div class="page-heading senior-hub-heading">
+        <div class="senior-hub-badges">
+          <span class="senior-id-pill">{m.id}</span>
+          {m.challenge?.kind && (
+            <span class="senior-kind-pill">{m.challenge.kind.toUpperCase()}</span>
+          )}
+          <span class="senior-gates-count">{passedGates}/5 gates</span>
+        </div>
         <h1>{m.title[locale]}</h1>
-        <p>{m.challenge?.kind.toUpperCase()}</p>
       </div>
 
       <div class="senior-lab-grid">
         <div class="senior-lab-main">
           {/* Production Scenario Card */}
           <section class="card scenario-card">
-            <span class="level-ghost-num" aria-hidden="true">{m.id.replace('S', '')}</span>
-            <div class="panel-title">
-              <img class="pixel-icon" src={asset('icons/crown.svg')} width={20} height={20} alt="" aria-hidden="true" />
-              <b>{t.scenarioTitle}</b>
+            <div class="scenario-card-header">
+              <div class="scenario-card-title-group">
+                <img class="pixel-icon" src={asset('icons/crown.svg')} width={18} height={18} alt="" aria-hidden="true" />
+                <b>{t.scenarioTitle}</b>
+              </div>
+              <span class="senior-gates-count">{passedGates}/5 gates</span>
             </div>
+
             <p class="brief-lead">{m.challenge?.scenario[locale]}</p>
             <div class="notice" role="note">{t.notice}</div>
 
-            {/* Activities Action Bar */}
-            <div class="hero-ctas" style={{ marginTop: '20px' }}>
-              <a class="btn btn-senior" href={`#/senior/${moduleId}/decision-lab`}>
-                {t.btnQuiz}
+            {/* 5 Structured Quality Gate Cards */}
+            <div class="hub-gates-section">
+              <span class="hub-gates-label">{t.gatesHeading}</span>
+              <div class="hub-gates-grid">
+                {gates.map(g => {
+                  const passed = !!g.res?.passed;
+                  const attempted = !!g.res;
+                  return (
+                    <a
+                      key={g.code}
+                      class={`hub-gate-card ${passed ? 'passed' : attempted ? 'attempted' : ''}`}
+                      href={g.href}
+                    >
+                      <span class="hub-gate-code">{g.code}</span>
+                      <span class="hub-gate-title">{g.label}</span>
+                      <span class="hub-gate-state">
+                        {passed ? `✓ ${g.res.score}%` : attempted ? `${g.res.score}%` : '→'}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Study Guide & Native Go Download Bar */}
+            <div class="hub-resources-row">
+              <a class="btn btn-senior-solid" href={`#/senior/${moduleId}/guide`}>
+                {t.btnGuide}
               </a>
-              <a class="btn btn-outline" href={`#/senior/${moduleId}/evidence-lab`}>
-                {t.btnEvidence}
-              </a>
-              <a class="btn btn-senior" href={`#/senior/${moduleId}/investigation-lab`}>
-                {t.btnInvestigation}
-              </a>
-              <a class="btn btn-outline" href={`#/senior/${moduleId}/operations-lab`}>
-                {t.btnOperations}
-              </a>
-              <a class="btn btn-outline" href={`#/senior/${moduleId}/review-lab`}>
-                Revisar código Go →
-              </a>
-              <a class="btn btn-senior" href={`#/senior/${moduleId}/guide`}>
-                Estudiar guía técnica →
-              </a>
-              <a class="btn btn-senior" href={`#/senior/${moduleId}/native`}>
+              <a class="btn btn-senior-ghost" href={`#/senior/${moduleId}/native`}>
                 {t.btnNative}
               </a>
             </div>
@@ -307,29 +341,39 @@ export function SeniorModuleHub({
 
         {/* Sidebar */}
         <aside class="senior-aside">
-          <section class="card">
-            <img class="gopher" src={asset('gophers/architecture.png')} alt="" aria-hidden="true" style={{ maxHeight: '130px', margin: '0 auto' }} />
+          <section class="card senior-progress-card">
+            <img class="gopher" src={asset('gophers/architecture.png')} alt="" aria-hidden="true" style={{ maxHeight: '116px', margin: '0 auto 12px' }} />
             <h3>{t.asideTitle}</h3>
             <ul class="rubric-list">
               <li>
-                <span>Decision Lab:</span>
-                <b>{seniorResults[moduleId] ? `${seniorResults[moduleId].score}%` : t.notEvaluated}</b>
+                <span>Decision Lab</span>
+                <b class={seniorResults[moduleId]?.passed ? 'done' : ''}>
+                  {seniorResults[moduleId] ? `${seniorResults[moduleId].score}%` : t.notEvaluated}
+                </b>
               </li>
               <li>
-                <span>Evidence Lab:</span>
-                <b>{evidenceResults[moduleId] ? `${evidenceResults[moduleId].score}%` : t.notEvaluated}</b>
+                <span>Evidence Lab</span>
+                <b class={evidenceResults[moduleId]?.passed ? 'done' : ''}>
+                  {evidenceResults[moduleId] ? `${evidenceResults[moduleId].score}%` : t.notEvaluated}
+                </b>
               </li>
               <li>
-                <span>Investigation:</span>
-                <b>{investigationResults[moduleId] ? `${investigationResults[moduleId].score}%` : t.notEvaluated}</b>
+                <span>Investigation</span>
+                <b class={investigationResults[moduleId]?.passed ? 'done' : ''}>
+                  {investigationResults[moduleId] ? `${investigationResults[moduleId].score}%` : t.notEvaluated}
+                </b>
               </li>
               <li>
-                <span>Operations Lab:</span>
-                <b>{operationsResults[moduleId] ? `${operationsResults[moduleId].score}%` : t.notEvaluated}</b>
+                <span>Operations Lab</span>
+                <b class={operationsResults[moduleId]?.passed ? 'done' : ''}>
+                  {operationsResults[moduleId] ? `${operationsResults[moduleId].score}%` : t.notEvaluated}
+                </b>
               </li>
               <li>
-                <span>Code Review:</span>
-                <b>{reviewResults[moduleId] ? `${reviewResults[moduleId].score}%` : t.notEvaluated}</b>
+                <span>Code Review</span>
+                <b class={reviewResults[moduleId]?.passed ? 'done' : ''}>
+                  {reviewResults[moduleId] ? `${reviewResults[moduleId].score}%` : t.notEvaluated}
+                </b>
               </li>
             </ul>
 
@@ -342,8 +386,8 @@ export function SeniorModuleHub({
 
           <section class="card">
             <h3>{t.nativeCardTitle}</h3>
-            <p class="small-disclaimer">{t.nativeCardDesc}</p>
-            <a class="btn btn-outline" href={`#/senior/${moduleId}/native`} style={{ marginTop: '10px' }}>
+            <p class="small-disclaimer" style={{ margin: '8px 0 14px' }}>{t.nativeCardDesc}</p>
+            <a class="btn btn-senior-ghost" href={`#/senior/${moduleId}/native`} style={{ width: '100%' }}>
               labs-native/{moduleId.toLowerCase()} ↗
             </a>
           </section>
