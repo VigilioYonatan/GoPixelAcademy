@@ -1559,3 +1559,391 @@ const SENIOR_MODULE_DECKS: Record<string, CinemaDeck> = {
 export function getSeniorCinemaDeck(moduleId: string): CinemaDeck | undefined {
   return SENIOR_MODULE_DECKS[moduleId];
 }
+
+/** 21. Capstone Senior de Órdenes + Outbox en Go */
+export const SENIOR_CAPSTONE_DECK: CinemaDeck = attachAudio({
+  id: 'SENIOR-CAPSTONE',
+  kicker: 'CAPSTONE GO NATIVO · ESTUDIO HD',
+  heading: 'Capstone Senior: pedidos HTTP, Mutex, idempotencia y Outbox',
+  ctaLabel: 'Descargar labs-native y correr go test -race',
+  ctaHref: '#/senior/capstone',
+  scenes: [
+    {
+      chapter: '01 · Frontera y Riesgo',
+      title: 'Cuerpos sin límite o stock fuera de lock rompen el inventario',
+      durationSec: 12,
+      mascot: 'question',
+      aura: 'ember',
+      speaker: 'host',
+      speech:
+        'El Capstone Senior conecta HTTP, inventario con 200 goroutines e idempotencia. Si aceptamos cuerpos ilimitados, reutilizamos claves o consultamos stock fuera del mutex, el sistema colapsa o sobrevende.',
+      visual: {
+        kind: 'architecture',
+        mode: 'incident',
+        nodes: [
+          { label: 'POST /orders', sub: 'Payload sin límite / token débil', state: 'hot' },
+          { label: 'Check Stock', sub: 'Carrera con 200 goroutines', state: 'hot' },
+          { label: 'Outbox Local', sub: 'Eventos perdidos / duplicados', state: 'hot' },
+        ],
+        metricLabel: 'Integridad bajo 200 goroutines',
+        metricBefore: 'Sobreventa y race condition',
+        metricAfter: '17 reservas exactas + 0 fugas',
+      },
+    },
+    {
+      chapter: '02 · Diseño Transaccional',
+      title: 'Validación estricta de 4 KiB, sync.Mutex e idempotencia',
+      durationSec: 13,
+      mascot: 'coding',
+      aura: 'cyan',
+      speaker: 'gopher',
+      speech:
+        'Por eso blindamos la frontera con POST /orders, application/json estricto hasta 4 KiB y token de desarrollo; el store reserva bajo sync.Mutex, memoriza recibos idempotentes o devuelve ErrConflict, y encola eventos en un Outbox copiado de forma segura.',
+      visual: {
+        kind: 'code-diff',
+        file: 'labs-native/capstone/orders/store.go',
+        before: [
+          'if stock[sku] >= qty { // lectura fuera del lock',
+          '    stock[sku] -= qty',
+          '}',
+        ],
+        after: [
+          's.mu.Lock()',
+          'defer s.mu.Unlock()',
+          'receipt, conflict := s.checkIdempotency(key, req)',
+          's.outbox = append(s.outbox, event.Clone()) // copia segura',
+        ],
+        callout: 'Una clave repetida conserva recibo; reutilizada con otros datos retorna ErrConflict.',
+      },
+    },
+    {
+      chapter: '03 · Fuzzing & Race Detector',
+      title: 'Verificar invariantes con go test -race y BenchmarkSubmit',
+      durationSec: 12,
+      mascot: 'celebrate',
+      aura: 'gold',
+      speaker: 'gopher',
+      speech:
+        'Para comprobar cada invariante en tu máquina, descarga labs-native y ejecuta go test -race junto con FuzzIdempotentReceipt y BenchmarkSubmit. Así cierras el círculo completo de Senior Mode con código real.',
+      visual: {
+        kind: 'terminal',
+        title: 'labs-native · go test ./capstone/...',
+        lines: [
+          { prompt: '$', text: 'go test -race ./capstone/... -count=1', tone: 'cmd' },
+          { text: 'ok   capstone/orders  TestAtomicInventoryUnderLoad (17/200)', tone: 'ok' },
+          { text: 'ok   capstone/orders  FuzzIdempotentReceipt · BenchmarkSubmit', tone: 'ok' },
+          { text: 'PASS · Sistema Go Senior validado de extremo a extremo', tone: 'ok' },
+        ],
+      },
+    },
+  ],
+});
+
+/** 22-24. Anclas clave del track Aprende Go (B01, I01, A01) */
+const LESSON_ANCHOR_DECKS: Record<string, CinemaDeck> = {
+  B01: attachAudio({
+    id: 'LESSON-B01',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B01',
+    heading: 'Tu primer programa Go: package main, import y binario nativo',
+    ctaLabel: 'Completar main.go abajo',
+    ctaHref: '#/lesson/B01',
+    scenes: [
+      {
+        chapter: '01 · Anatomía Base',
+        title: 'Todo ejecutable Go arranca en package main y func main()',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'gold',
+        speaker: 'host',
+        speech:
+          'Estás frente a B01, tu primer programa en Go. ¿Por qué todo ejecutable empieza obligatoriamente declarando package main, importando fmt y definiendo una func main sin parámetros?',
+        visual: {
+          kind: 'code-diff',
+          file: 'main.go',
+          before: [
+            '// Sin package main no hay binario ejecutable',
+            'fmt.Println("Hola")',
+          ],
+          after: [
+            'package main',
+            'import "fmt"',
+            'func main() { fmt.Println("Hola GoPixel!") }',
+          ],
+          callout: 'Regla estricta de Go: imports o variables sin usar impiden compilar.',
+        },
+      },
+      {
+        chapter: '02 · Binario Estático',
+        title: 'Compilación veloz a código máquina sin máquinas virtuales',
+        durationSec: 11,
+        mascot: 'reading',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Porque el compilador go build usa package main como punto de entrada único, enlaza únicamente paquetes declarados como fmt, rechaza variables o imports sin usar desde el primer segundo y genera un binario nativo autónomo.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'Código Fuente Go',
+          stackItems: [
+            { name: 'package main', value: 'Entry point', state: 'ok' },
+            { name: 'import "fmt"', value: 'Stdlib I/O', state: 'ok' },
+            { name: 'func main()', value: 'Sin retorno', state: 'ok' },
+          ],
+          heapLabel: 'Resultado de go build',
+          heapItems: [
+            { addr: 'BINARIO', data: 'app / app.exe estático', note: 'Cero JVM o runtime externo' },
+            { addr: 'VELOCIDAD', data: 'Compilación en milisegundos', note: 'Imports verificados al instante' },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Tu Turno en B01',
+        title: 'Valida la sintaxis aquí y compila localmente con go run',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'En GoPixel el navegador verifica la sintaxis de tu solución al instante, y cuando quieras compilar programas completos usarás go run o go build en tu terminal. Completa fmt.Println en main.go para ganar tu primer logro.',
+        visual: {
+          kind: 'terminal',
+          title: 'hello-go · tu flujo local',
+          lines: [
+            { prompt: '$', text: 'go run main.go', tone: 'cmd' },
+            { text: 'Hola GoPixel!', tone: 'ok' },
+            { prompt: '$', text: 'go build -o gopixel-app main.go', tone: 'cmd' },
+            { text: 'PASS · Primer paso hacia Go Backend completado', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  I01: attachAudio({
+    id: 'LESSON-I01',
+    kicker: 'INTERMEDIO GO · LECCIÓN I01',
+    heading: 'Interfaces implícitas: desacoplamiento sin implements',
+    ctaLabel: 'Practicar interfaz I01 abajo',
+    ctaHref: '#/lesson/I01',
+    scenes: [
+      {
+        chapter: '01 · Adiós Rigidez',
+        title: 'Satisfacer contratos sin acoplar paquetes con implements',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'violet',
+        speaker: 'host',
+        speech:
+          'Saltamos al nivel intermedio I01: en otros lenguajes las clases declaran implements explícitamente. ¿Por qué Go permite que un struct cumpla una interfaz sin escribir jamás esa palabra clave?',
+        visual: {
+          kind: 'code-diff',
+          file: 'store.go',
+          before: [
+            '// En otros lenguajes: acoplas el struct al paquete contrato',
+            'class MemoryStore implements pkg.Store { ... }',
+          ],
+          after: [
+            'type Writer interface { Write(p []byte) (int, error) }',
+            'func (m *MemoryStore) Write(p []byte) (int, error) { ... }',
+          ],
+          callout: 'Si tiene los métodos exactos, ya implementa la interfaz automáticamente.',
+        },
+      },
+      {
+        chapter: '02 · Duck Typing Estático',
+        title: 'Contratos pequeños definidos del lado del consumidor',
+        durationSec: 11,
+        mascot: 'architecture',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Son interfaces implícitas: si un tipo concreto implementa los métodos exactos que pide io.Writer o tu propio Store, ya satisface el contrato en tiempo de compilación sin acoplar paquetes entre sí ni crear jerarquías rígidas.',
+        visual: {
+          kind: 'architecture',
+          mode: 'mitigated',
+          nodes: [
+            { label: 'HTTP Handler', sub: 'Pide interfaz mínima Store', state: 'ok' },
+            { label: 'PostgresStore', sub: 'Implementa en producción', state: 'ok' },
+            { label: 'FakeStore', sub: 'Implementa en go test', state: 'ok' },
+          ],
+          metricLabel: 'Acoplamiento de paquetes',
+          metricBefore: 'Dependencia circular rígida',
+          metricAfter: 'Inversión de dependencias limpia ✓',
+        },
+      },
+      {
+        chapter: '03 · Testing Sin Mocks Pesados',
+        title: 'Sustituir IO real por fakes deterministas en go test',
+        durationSec: 10,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Al definir interfaces pequeñas justo donde las consumes, pruebas servicios HTTP o repositorios sustituyendo memoria real por fakes deterministas en go test sin levantar bases de datos pesadas.',
+        visual: {
+          kind: 'terminal',
+          title: 'i01-interfaces · test determinista',
+          lines: [
+            { prompt: '$', text: 'go test -v ./service', tone: 'cmd' },
+            { text: 'svc := NewOrderService(&FakeStore{}) // cumple Store', tone: 'ok' },
+            { text: 'PASS · 0 Docker requerido · verificación en 4 ms', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  A01: attachAudio({
+    id: 'LESSON-A01',
+    kicker: 'AVANZADO GO · LECCIÓN A01',
+    heading: 'Goroutines M:N, stack de 2 KB y canales tipados',
+    ctaLabel: 'Resolver ejercicio A01 abajo',
+    ctaHref: '#/lesson/A01',
+    scenes: [
+      {
+        chapter: '01 · Peso de Hilos',
+        title: 'Miles de hilos del OS consumen gigas; Go escala ligero',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Llegamos a A01, nivel avanzado. Un hilo del sistema operativo pesa megabytes, así que crear miles frena el servidor. ¿Cómo logra Go ejecutar decenas de miles de tareas concurrentes sin saturar la memoria?',
+        visual: {
+          kind: 'lanes',
+          mode: 'deadlock',
+          laneA: {
+            name: 'OS Threads (~2 MB c/u)',
+            steps: ['10,000 hilos -> 20 GB RAM', 'Context switch lento en kernel'],
+          },
+          laneB: {
+            name: 'Memoria sin canal',
+            steps: ['Escritura concurrente sin lock', 'Peligro de data race'],
+          },
+          statusBadge: 'RIESGO · Sobrecarga de hilos y estado compartido',
+        },
+      },
+      {
+        chapter: '02 · Scheduler M:N',
+        title: 'Comunicar valores por canales en lugar de compartir memoria',
+        durationSec: 11,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Una goroutine nace con apenas dos kilobytes de stack dinámico y el runtime M:N de Go las multiplexa sobre pocos núcleos reales. En lugar de compartir memoria sin cuidado, comunican valores seguros usando canales tipados.',
+        visual: {
+          kind: 'lanes',
+          mode: 'ordered',
+          laneA: {
+            name: 'G1..GN (2 KB stack)',
+            steps: ['go work(ctx, ch)', 'Planificador M:N en user-space'],
+          },
+          laneB: {
+            name: 'Canal Tipado ch',
+            steps: ['ch <- resultado', 'res := <-ch (handshake seguro)'],
+          },
+          statusBadge: 'SEGURO · Cero context switch pesado + sincronía clara',
+        },
+      },
+      {
+        chapter: '03 · Cierre Coordinado',
+        title: 'Evitar fugas de goroutines con context y WaitGroup',
+        durationSec: 10,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Recuerda siempre coordinar el cierre con context.Context y WaitGroup para no dejar goroutines colgadas en background, y valida cada lección concurrente pasando go test -race.',
+        visual: {
+          kind: 'terminal',
+          title: 'a01-concurrency · clean shutdown',
+          lines: [
+            { prompt: '$', text: 'go test -race ./a01-goroutines', tone: 'cmd' },
+            { text: 'wg.Wait() -> todas las goroutines cerraron con ctx.Done()', tone: 'ok' },
+            { text: 'PASS · 0 data races · 0 goroutine leaks', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+};
+
+export function getLessonCinemaDeck(lessonId: string): CinemaDeck | undefined {
+  return LESSON_ANCHOR_DECKS[lessonId];
+}
+
+/** 25. Frameworks Academy Overview (net/http, Chi, Gin, Echo, Fiber, SQL, gRPC) */
+export const FRAMEWORKS_OVERVIEW_DECK: CinemaDeck = attachAudio({
+  id: 'FRAMEWORKS-OVERVIEW',
+  kicker: 'FRAMEWORKS ACADEMY · ESTUDIO HD',
+  heading: 'Cómo elegir framework Go según tus restricciones reales',
+  ctaLabel: 'Explorar las 8 rutas abajo',
+  ctaHref: '#/frameworks',
+  scenes: [
+    {
+      chapter: '01 · El Dilema',
+      title: '¿Cuándo basta net/http y cuándo conviene un router externo?',
+      durationSec: 11,
+      mascot: 'question',
+      aura: 'cyan',
+      speaker: 'host',
+      speech:
+        'En Frameworks Academy hay ocho rutas: net/http estándar, Gin, Chi, Echo, Fiber, persistencia y gRPC. ¿Necesitas siempre instalar un framework pesado para exponer una API rápida en Go?',
+      visual: {
+        kind: 'architecture',
+        mode: 'incident',
+        nodes: [
+          { label: 'Stdlib net/http', sub: '0 dependencias externas', state: 'normal' },
+          { label: 'Gin / Chi / Echo', sub: 'Radix Tree + http.Handler', state: 'normal' },
+          { label: 'Fiber (fasthttp)', sub: 'Ruptura de net/http estándar', state: 'hot' },
+        ],
+        metricLabel: 'Trampa habitual al elegir stack',
+        metricBefore: 'Elegir solo por hype',
+        metricAfter: 'Elegir según compatibilidad y P99',
+      },
+    },
+    {
+      chapter: '02 · Mapa del Ecosistema',
+      title: 'Go 1.22+ ServeMux, Chi composable, Gin/Echo JSON y Fiber fasthttp',
+      durationSec: 13,
+      mascot: 'architecture',
+      aura: 'violet',
+      speaker: 'gopher',
+      speech:
+        'Depende de tu restricción real: desde Go 1.22 ServeMux soporta rutas con método y parámetros sin dependencias externas; Chi mantiene cien por cien compatibilidad http.Handler; Gin y Echo agilizan JSON; y Fiber prioriza ultra baja latencia con fasthttp.',
+      visual: {
+        kind: 'architecture',
+        mode: 'mitigated',
+        nodes: [
+          { label: 'net/http + Chi', sub: '100% estándar · 2 allocs', state: 'ok' },
+          { label: 'Gin / Echo', sub: 'JSON rápido + validación', state: 'ok' },
+          { label: 'SQL + gRPC', sub: 'Contratos fuertes e índices', state: 'ok' },
+        ],
+        metricLabel: 'Criterio de Arquitectura Go',
+        metricBefore: 'Reescribir por incompatibilidad',
+        metricAfter: 'Portabilidad total con http.Handler ✓',
+      },
+    },
+    {
+      chapter: '03 · Benchmark Real',
+      title: 'Medir throughput, latencia P99 y allocs/op antes de decidir',
+      durationSec: 11,
+      mascot: 'senior',
+      aura: 'gold',
+      speaker: 'gopher',
+      speech:
+        'Compara throughput, P99 y asignaciones por operación en la tabla inferior, elige la herramienta más simple que cumpla tus requisitos y lleva ese criterio arquitectónico directamente a Senior Mode.',
+      visual: {
+        kind: 'terminal',
+        title: 'frameworks · criterio de selección Go 1.23',
+        lines: [
+          { prompt: '$', text: 'mux.HandleFunc("GET /orders/{id}", h.GetOrder)', tone: 'cmd' },
+          { text: 'net/http & Chi -> ~145k-160k req/s · compatibilidad total', tone: 'ok' },
+          { text: 'PASS · Simplicidad primero, benchmarks con evidencia', tone: 'ok' },
+        ],
+      },
+    },
+  ],
+});

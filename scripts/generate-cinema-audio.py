@@ -106,6 +106,26 @@ def clean_for_speech(text: str) -> str:
         ("HTTP 409", "HTTP cuatrocientos nueve"),
         ("409 Conflict", "cuatrocientos nueve conflicto"),
         ("POST /charge", "POST barra charge"),
+        ("POST /orders", "POST barra orders"),
+        ("application/json", "application barra json"),
+        ("4 KiB", "cuatro kilobytes"),
+        ("ErrConflict", "error Conflict"),
+        ("FuzzIdempotentReceipt", "Fuzz Idempotent Receipt"),
+        ("BenchmarkSubmit", "Benchmark Submit"),
+        ("labs-native", "labs guion native"),
+        ("package main", "package main"),
+        ("go build", "go build"),
+        ("go run", "go run"),
+        ("io.Writer", "i o punto Writer"),
+        ("ServeMux", "Serve Mux"),
+        ("http.Handler", "http punto Handler"),
+        ("net/http", "net barra http"),
+        ("fasthttp", "fast http"),
+        ("WaitGroup", "Wait Group"),
+        ("200", "doscientas"),
+        ("gRPC", "ge erre pe ce"),
+        ("chi", "chi"),
+        ("Chi", "Chi"),
         ("Quality Gates", "puertas de calidad"),
         ("S01", "ese cero uno"),
         ("S02", "ese cero dos"),
@@ -125,6 +145,10 @@ def clean_for_speech(text: str) -> str:
         ("S16", "ese dieciséis"),
         ("S17", "ese diecisiete"),
         ("S18", "ese dieciocho"),
+        ("B01", "be cero uno"),
+        ("I01", "i cero uno"),
+        ("A01", "a cero uno"),
+        ("M:N", "eme a ene"),
     ]
     out = text
     for old, new in replacements:
@@ -817,8 +841,125 @@ def build_batch_4_scripts() -> dict[str, tuple[str, list[dict]]]:
     return decks
 
 
+def build_batch_5_scripts() -> dict[str, tuple[str, list[dict]]]:
+    """Next 5 capsules: SENIOR-CAPSTONE, LESSON-B01, LESSON-I01, LESSON-A01, FRAMEWORKS-OVERVIEW."""
+    decks: dict[str, tuple[str, list[dict]]] = {}
+
+    # 21. SENIOR-CAPSTONE (Capstone de Órdenes + Outbox en Go)
+    decks["SENIOR-CAPSTONE"] = (
+        "senior-capstone.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "El Capstone Senior conecta HTTP, inventario con 200 goroutines e idempotencia. Si aceptamos cuerpos ilimitados, reutilizamos claves o consultamos stock fuera del mutex, el sistema colapsa o sobrevende.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Por eso blindamos la frontera con POST /orders, application/json estricto hasta 4 KiB y token de desarrollo; el store reserva bajo sync.Mutex, memoriza recibos idempotentes o devuelve ErrConflict, y encola eventos en un Outbox copiado de forma segura.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Para comprobar cada invariante en tu máquina, descarga labs-native y ejecuta go test -race junto con FuzzIdempotentReceipt y BenchmarkSubmit. Así cierras el círculo completo de Senior Mode con código real.",
+            },
+        ],
+    )
+
+    # 22. LESSON-B01 (Primer programa Go: package main, import, fmt.Println)
+    decks["LESSON-B01"] = (
+        "lesson-b01.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Estás frente a B01, tu primer programa en Go. ¿Por qué todo ejecutable empieza obligatoriamente declarando package main, importando fmt y definiendo una func main sin parámetros?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Porque el compilador go build usa package main como punto de entrada único, enlaza únicamente paquetes declarados como fmt, rechaza variables o imports sin usar desde el primer segundo y genera un binario nativo autónomo.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "En GoPixel el navegador verifica la sintaxis de tu solución al instante, y cuando quieras compilar programas completos usarás go run o go build en tu terminal. Completa fmt.Println en main.go para ganar tu primer logro.",
+            },
+        ],
+    )
+
+    # 23. LESSON-I01 (Interfaces implícitas e inyección de dependencias)
+    decks["LESSON-I01"] = (
+        "lesson-i01.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Saltamos al nivel intermedio I01: en otros lenguajes las clases declaran implements explícitamente. ¿Por qué Go permite que un struct cumpla una interfaz sin escribir jamás esa palabra clave?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Son interfaces implícitas: si un tipo concreto implementa los métodos exactos que pide io.Writer o tu propio Store, ya satisface el contrato en tiempo de compilación sin acoplar paquetes entre sí ni crear jerarquías rígidas.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Al definir interfaces pequeñas justo donde las consumes, pruebas servicios HTTP o repositorios sustituyendo memoria real por fakes deterministas en go test sin levantar bases de datos pesadas.",
+            },
+        ],
+    )
+
+    # 24. LESSON-A01 (Goroutines M:N, canales tipados y WaitGroup)
+    decks["LESSON-A01"] = (
+        "lesson-a01.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Llegamos a A01, nivel avanzado. Un hilo del sistema operativo pesa megabytes, así que crear miles frena el servidor. ¿Cómo logra Go ejecutar decenas de miles de tareas concurrentes sin saturar la memoria?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Una goroutine nace con apenas dos kilobytes de stack dinámico y el runtime M:N de Go las multiplexa sobre pocos núcleos reales. En lugar de compartir memoria sin cuidado, comunican valores seguros usando canales tipados.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Recuerda siempre coordinar el cierre con context.Context y WaitGroup para no dejar goroutines colgadas en background, y valida cada lección concurrente pasando go test -race.",
+            },
+        ],
+    )
+
+    # 25. FRAMEWORKS-OVERVIEW (net/http, Chi, Gin, Echo, Fiber y gRPC)
+    decks["FRAMEWORKS-OVERVIEW"] = (
+        "frameworks-overview.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "En Frameworks Academy hay ocho rutas: net/http estándar, Gin, Chi, Echo, Fiber, persistencia y gRPC. ¿Necesitas siempre instalar un framework pesado para exponer una API rápida en Go?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Depende de tu restricción real: desde Go 1.22 ServeMux soporta rutas con método y parámetros sin dependencias externas; Chi mantiene cien por cien compatibilidad http.Handler; Gin y Echo agilizan JSON; y Fiber prioriza ultra baja latencia con fasthttp.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Compara throughput, P99 y asignaciones por operación en la tabla inferior, elige la herramienta más simple que cumpla tus requisitos y lleva ese criterio arquitectónico directamente a Senior Mode.",
+            },
+        ],
+    )
+
+    return decks
+
+
 async def main() -> None:
-    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch4"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch5"
     AUDIO_OUT_DIR.mkdir(parents=True, exist_ok=True)
     if mode == "--all":
         decks = {
@@ -826,6 +967,7 @@ async def main() -> None:
             **build_batch_2_scripts(),
             **build_batch_3_scripts(),
             **build_batch_4_scripts(),
+            **build_batch_5_scripts(),
         }
     elif mode == "--batch1":
         decks = build_batch_1_scripts()
@@ -833,8 +975,10 @@ async def main() -> None:
         decks = build_batch_2_scripts()
     elif mode == "--batch3":
         decks = build_batch_3_scripts()
-    else:
+    elif mode == "--batch4":
         decks = build_batch_4_scripts()
+    else:
+        decks = build_batch_5_scripts()
     print(f"🎙️ Generando {len(decks)} pistas de audio neuronal HD + mastering de estudio con {FFMPEG}...")
     sem = asyncio.Semaphore(5)
 

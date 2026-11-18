@@ -1,6 +1,8 @@
 import { useState } from 'preact/hooks';
 import capstone from '../../content/senior/capstone.json';
 import { GoCodeBlock } from '../../components/GoCode';
+import { GopherPlayer } from '../cinema/GopherPlayer';
+import { SENIOR_CAPSTONE_DECK } from '../cinema/storyboards';
 type Locale='es'|'en'|'ja'|'zh'|'pt'|'fr';
 const messages:Record<Locale,{heading:string;summary:string;run:string;download:string;back:string;boundaries:string;what:string;note:string;copyCmd:string;copied:string}>={
  es:{heading:'Capstone de ingeniería Senior',summary:'Un sistema de pedidos local con código Go, HTTP, concurrencia y pruebas reales.',run:'Pruebas locales',download:'Descargar código y tests Go',back:'Volver a Senior',boundaries:'Límites del ejemplo',what:'Competencias y comprobaciones',note:'La descripción técnica original está en español. Esta página no ejecuta Go dentro del navegador.',copyCmd:'Copiar comando',copied:'✓ Copiado'},
@@ -23,6 +25,7 @@ export function SeniorCapstone({locale}:{locale:Locale}){
  <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="#/senior">Senior Mode</a><span>/</span><b>Capstone</b></nav>
  <header class="page-heading"><span class="senior-kicker">GO · REAL SOURCE · RACE DETECTOR</span><h1 id="capstone-heading">{t.heading}</h1><p>{t.summary}</p></header>
  {locale!=='es'&&<p class="notice" role="note">{t.note}</p>}
+ <div style={{marginBottom:'22px'}}><GopherPlayer deck={SENIOR_CAPSTONE_DECK} locale={locale} compact /></div>
  <div class="capstone-flow"><span>HTTP /orders</span><span>JSON + Auth</span><span>Store + Mutex</span><span>Outbox</span></div>
  <section class="card"><h2>{t.what}</h2><div class="capstone-cards">{capstone.steps.map(s=><article class="capstone-step" key={s.id} lang="es"><span class="eyebrow small">{s.area}</span><h3>{s.title}</h3><p>{s.detail}</p><code>{s.test}</code></article>)}</div></section>
  <div class="senior-guide-grid"><section class="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'10px'}}><h2 style={{margin:0}}>{t.run}</h2><button type="button" class="btn btn-outline" style={{minHeight:'34px',padding:'4px 12px',fontSize:'12px'}} onClick={copy}>{copied?t.copied:t.copyCmd}</button></div><GoCodeBlock code={capstone.command} lang="sh" /><a class="btn btn-senior native-download" href={`${base}downloads/go-native-senior-labs.zip`} download>{t.download} ↓</a></section>

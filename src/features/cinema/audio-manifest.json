@@ -280,5 +280,75 @@
       "gopher",
       "gopher"
     ]
+  },
+  "SENIOR-CAPSTONE": {
+    "src": "audio/senior-capstone.mp3",
+    "totalSec": 40.88,
+    "cues": [
+      0.45,
+      13.45,
+      28.78
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "LESSON-B01": {
+    "src": "audio/lesson-b01.mp3",
+    "totalSec": 36.07,
+    "cues": [
+      0.45,
+      11.05,
+      22.63
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "LESSON-I01": {
+    "src": "audio/lesson-i01.mp3",
+    "totalSec": 34.84,
+    "cues": [
+      0.45,
+      10.97,
+      22.98
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "LESSON-A01": {
+    "src": "audio/lesson-a01.mp3",
+    "totalSec": 35.64,
+    "cues": [
+      0.45,
+      12.35,
+      24.81
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "FRAMEWORKS-OVERVIEW": {
+    "src": "audio/frameworks-overview.mp3",
+    "totalSec": 40.34,
+    "cues": [
+      0.45,
+      13.59,
+      28.86
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
   }
 }

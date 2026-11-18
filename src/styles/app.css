@@ -114,8 +114,8 @@
 @media(max-width:640px){.native-links{flex-direction:column}.native-links .btn{justify-content:center;text-align:center}}
 
 /* Senior study guides — responsive and keyboard-friendly, no heavy animations. */
-.senior-guide{max-width:1260px;margin:0 auto}.senior-guide-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}.senior-guide-prose section{margin:20px 0;padding-bottom:13px;border-bottom:1px solid var(--border)}.senior-guide-prose p{line-height:1.8}.senior-guide-grid aside{position:sticky;top:90px}.senior-guide-code{margin-top:18px}.senior-guide-code summary{cursor:pointer;padding:12px 0}.senior-guide-code summary:focus-visible{outline:3px solid var(--go)}.senior-guide-code pre,.senior-guide-grid pre{white-space:pre;overflow:auto;max-width:100%;font-size:12px;line-height:1.6}.senior-guide-grid .btn{margin-top:12px;display:inline-flex}.senior-guide-prose h3{line-height:1.35}
-@media(max-width:850px){.senior-guide-grid{grid-template-columns:1fr}.senior-guide-grid aside{position:static}}
+.senior-guide{max-width:1260px;margin:0 auto}.senior-guide-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}.senior-guide-grid>*{min-width:0}.senior-guide-prose section{margin:20px 0;padding-bottom:13px;border-bottom:1px solid var(--border)}.senior-guide-prose p{line-height:1.8}.senior-guide-grid aside{position:sticky;top:90px}.senior-guide-code{margin-top:18px}.senior-guide-code summary{cursor:pointer;padding:12px 0}.senior-guide-code summary:focus-visible{outline:3px solid var(--go)}.senior-guide-code pre,.senior-guide-grid pre{white-space:pre;overflow:auto;max-width:100%;font-size:12px;line-height:1.6}.senior-guide-grid .btn{margin-top:12px;display:inline-flex}.senior-guide-prose h3{line-height:1.35}
+@media(max-width:850px){.senior-guide-grid{grid-template-columns:minmax(0,1fr)}.senior-guide-grid aside{position:static}}
 
 /* Senior peer review: readable Go source, keyboard access and narrow-screen overflow control. */
 .senior-code-review .review-code{max-height:420px;overflow:auto;max-width:100%;font-size:13px;line-height:1.65;white-space:pre;tab-size:4;border-left:3px solid var(--go,#00add8)}
@@ -129,7 +129,7 @@
 .capstone-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
 .capstone-step{border:1px solid var(--border);border-radius:13px;padding:16px;min-width:0}.capstone-step h3{font-size:17px;margin:8px 0}.capstone-step p{line-height:1.65}
 .capstone-step code{font-size:12px;word-break:break-word;color:var(--go,#00add8)}
-.senior-capstone .card pre{overflow:auto;max-width:100%}.senior-capstone li{margin-bottom:10px;line-height:1.6}
+.senior-capstone .card{min-width:0;max-width:100%}.senior-capstone .card pre{overflow:auto;max-width:100%}.senior-capstone li{margin-bottom:10px;line-height:1.6}
 @media(max-width:740px){.capstone-cards{grid-template-columns:1fr}.capstone-flow span{flex:1 1 44%}.capstone-flow span::after{display:none}}
 
 /* Senior Readiness Radar Chart & Domain Badges */

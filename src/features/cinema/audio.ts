@@ -34,7 +34,14 @@ export function cleanForSpeech(text: string): string {
     .replace(/B\/op/g, 'bytes por operación')
     .replace(/allocs\/op/g, 'asignaciones por operación')
     .replace(/sync\/atomic/g, 'sync barra atomic')
-    .replace(/sync\.Mutex/g, 'sync punto mutex');
+    .replace(/sync\.Mutex/g, 'sync punto mutex')
+    .replace(/net\/http/g, 'net barra http')
+    .replace(/http\.Handler/g, 'http punto Handler')
+    .replace(/io\.Writer/g, 'i o punto Writer')
+    .replace(/POST \/orders/g, 'POST barra orders')
+    .replace(/application\/json/g, 'application barra json')
+    .replace(/WaitGroup/g, 'Wait Group')
+    .replace(/ServeMux/g, 'Serve Mux');
 }
 
 export function isSpeechSupported(): boolean {
