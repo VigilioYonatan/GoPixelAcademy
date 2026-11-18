@@ -44,7 +44,11 @@ export function cleanForSpeech(text: string): string {
     .replace(/ServeMux/g, 'Serve Mux')
     .replace(/float64\(peso\)/g, 'float sesenta y cuatro de peso')
     .replace(/float64/g, 'float sesenta y cuatro')
-    .replace(/make\(\[\]int, 0, 5\)/g, 'make de slice entero cero cinco');
+    .replace(/make\(\[\]int, 0, 5\)/g, 'make de slice entero cero cinco')
+    .replace(/map\[string\]string/g, 'mapa de string a string')
+    .replace(/\*n \+= 1/g, 'desreferenciar ene y sumar uno')
+    .replace(/if err != nil/g, 'si error es distinto de nil')
+    .replace(/comma-ok/g, 'coma ok');
 }
 
 export function isSpeechSupported(): boolean {

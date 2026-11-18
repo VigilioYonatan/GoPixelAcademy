@@ -151,6 +151,19 @@ def clean_for_speech(text: str) -> str:
         ("B04", "be cero cuatro"),
         ("B05", "be cero cinco"),
         ("B06", "be cero seis"),
+        ("B07", "be cero siete"),
+        ("B08", "be cero ocho"),
+        ("B09", "be cero nueve"),
+        ("B10", "be diez"),
+        ("B11", "be once"),
+        ("comma-ok", "coma ok"),
+        ("map[string]string", "mapa de string a string"),
+        ("incrementar(&valor)", "incrementar pasando la dirección de valor"),
+        ("incrementar(n *int)", "incrementar con puntero a entero ene"),
+        ("*n += 1", "desreferenciar ene y sumar uno"),
+        ("Area() float64", "Área devolviendo float sesenta y cuatro"),
+        ("if err != nil", "si error es distinto de nil"),
+        ("LIFO", "último en entrar, primero en salir LIFO"),
         ("I01", "i cero uno"),
         ("A01", "a cero uno"),
         ("float64(peso)", "float sesenta y cuatro de peso"),
@@ -1087,8 +1100,125 @@ def build_batch_6_scripts() -> dict[str, tuple[str, list[dict]]]:
     return decks
 
 
+def build_batch_7_scripts() -> dict[str, tuple[str, list[dict]]]:
+    """Next 5 Basic track capsules: LESSON-B07, LESSON-B08, LESSON-B09, LESSON-B10, LESSON-B11."""
+    decks: dict[str, tuple[str, list[dict]]] = {}
+
+    # 31. LESSON-B07 (Maps y modismo comma-ok)
+    decks["LESSON-B07"] = (
+        "lesson-b07.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B07: mapas en Go. Si consulto una clave que no existe dentro de map[string]string, Go no lanza ninguna excepción sino que devuelve un string vacío. ¿Cómo sé si la clave estaba ausente o guardaba un valor vacío?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Usa siempre el modismo comma-ok al consultar un mapa: la segunda variable booleana te confirma con exactitud si la clave existe. Además recuerda inicializar el mapa antes de escribir o entrarás en panic sobre nil map.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "También ten presente que el orden al iterar un mapa es intencionalmente aleatorio para evitar dependencias ocultas. Aplica comma-ok buscando Perú en capitales dentro del editor de B07.",
+            },
+        ],
+    )
+
+    # 32. LESSON-B08 (Structs y composición)
+    decks["LESSON-B08"] = (
+        "lesson-b08.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B08: structs. En programación orientada a objetos solemos crear clases con herencia profunda. ¿Cómo agrupa Go los campos de un dominio como Usuario sin usar herencia de clases?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Un struct empaqueta campos tipados de forma contigua en memoria favoreciendo el rendimiento de la caché del procesador. Cuando necesitas reutilizar comportamiento, Go apuesta por composición limpia incrustando structs pequeños.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Las mayúsculas en nombres como Nombre o Edad controlan automáticamente la visibilidad exportada del paquete. Declara type Usuario struct con Nombre string y Edad int para completar B08.",
+            },
+        ],
+    )
+
+    # 33. LESSON-B09 (Punteros & y * sin aritmética insegura)
+    decks["LESSON-B09"] = (
+        "lesson-b09.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B09: punteros. Muchos temen los punteros porque en C permiten aritmética de memoria que corrompe buffers. ¿Por qué los punteros en Go son seguros y cuándo realmente necesitamos pasar una dirección?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Go pasa todos los argumentos por valor, así que modificar una variable externa o evitar copiar una estructura pesada requiere pasar su dirección con ampersand y desreferenciar con asterisco, siempre sin aritmética arbitraria de punteros.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "El recolector de basura rastrea esas referencias y el escape analysis decide si viven en Stack o Heap. Implementa incrementar(n *int) usando *n += 1 e invócala desde main en B09.",
+            },
+        ],
+    )
+
+    # 34. LESSON-B10 (Métodos con receptor por valor o puntero)
+    decks["LESSON-B10"] = (
+        "lesson-b10.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B10: métodos e interfaces base. Como Go no tiene clases, los métodos se declaran fuera del struct indicando un receptor antes del nombre. ¿Cuándo elegimos receptor por valor frente a puntero?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Si el método solo lee campos pequeños sin mutar el estado, un receptor por valor es seguro e idóneo frente a concurrencia. Si el método modifica atributos internos o maneja mutexes, debes usar siempre receptor por puntero.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Implementa ahora Area() float64 sobre Rectangulo con receptor por valor en B10, preparando el terreno directo para las interfaces implícitas de I01 y Senior Mode.",
+            },
+        ],
+    )
+
+    # 35. LESSON-B11 (Errores explícitos como valor y defer)
+    decks["LESSON-B11"] = (
+        "lesson-b11.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B11: errores y defer. En otros lenguajes una excepción puede saltar varias capas sin avisar y olvidar cerrar un archivo. ¿Cómo evita Go tanto excepciones ocultas como fugas de recursos?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "En Go un error es simplemente un valor retornado con errors.New y verificado explícitamente con if err != nil justo donde ocurre; y defer agenda la limpieza garantizada en orden LIFO al salir de la función.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Así cada cierre de archivo, lock o transacción SQL vive junto a su apertura sin perderse entre try-finally enormes. Retorna errors.New ante saldo negativo y usa defer en B11.",
+            },
+        ],
+    )
+
+    return decks
+
+
 async def main() -> None:
-    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch6"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch7"
     AUDIO_OUT_DIR.mkdir(parents=True, exist_ok=True)
     if mode == "--all":
         decks = {
@@ -1098,6 +1228,7 @@ async def main() -> None:
             **build_batch_4_scripts(),
             **build_batch_5_scripts(),
             **build_batch_6_scripts(),
+            **build_batch_7_scripts(),
         }
     elif mode == "--batch1":
         decks = build_batch_1_scripts()
@@ -1109,8 +1240,10 @@ async def main() -> None:
         decks = build_batch_4_scripts()
     elif mode == "--batch5":
         decks = build_batch_5_scripts()
-    else:
+    elif mode == "--batch6":
         decks = build_batch_6_scripts()
+    else:
+        decks = build_batch_7_scripts()
     print(f"🎙️ Generando {len(decks)} pistas de audio neuronal HD + mastering de estudio con {FFMPEG}...")
     sem = asyncio.Semaphore(5)
 

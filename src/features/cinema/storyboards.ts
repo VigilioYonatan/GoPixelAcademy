@@ -2247,6 +2247,381 @@ const LESSON_ANCHOR_DECKS: Record<string, CinemaDeck> = {
       },
     ],
   }),
+
+  B07: attachAudio({
+    id: 'LESSON-B07',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B07',
+    heading: 'Maps en Go y el modismo comma-ok para claves ausentes',
+    ctaLabel: 'Consultar Perú con comma-ok',
+    ctaHref: '#/lesson/B07',
+    scenes: [
+      {
+        chapter: '01 · Clave Ausente',
+        title: 'Un mapa sin comma-ok devuelve zero-value silenciosamente',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'gold',
+        speaker: 'host',
+        speech:
+          'Lección B07: mapas en Go. Si consulto una clave que no existe dentro de map[string]string, Go no lanza ninguna excepción sino que devuelve un string vacío. ¿Cómo sé si la clave estaba ausente o guardaba un valor vacío?',
+        visual: {
+          kind: 'code-diff',
+          file: 'maps.go',
+          before: [
+            'ciudad := capitales["Desconocida"] // retorna "" sin error',
+          ],
+          after: [
+            'ciudad, ok := capitales["Perú"]',
+            'if ok { fmt.Println("Capital encontrada:", ciudad) }',
+          ],
+          callout: 'El booleano ok distingue valor cero real de clave inexistente.',
+        },
+      },
+      {
+        chapter: '02 · Modismo Idiomático',
+        title: 'Comma-ok + make() previo para evitar panic al escribir en nil map',
+        durationSec: 11,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Usa siempre el modismo comma-ok al consultar un mapa: la segunda variable booleana te confirma con exactitud si la clave existe. Además recuerda inicializar el mapa antes de escribir o entrarás en panic sobre nil map.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'Reglas de Seguridad Map',
+          stackItems: [
+            { name: 'v, ok := m[k]', value: 'ok = true/false exacto', state: 'ok' },
+            { name: 'make(map[K]V)', value: 'Inicializado para escritura', state: 'ok' },
+          ],
+          heapLabel: 'Contrato Hash Table Go',
+          heapItems: [
+            { addr: 'ITER-RANDOM', data: 'Orden aleatorio intencional al iterar', note: 'Evita suponer orden de inserción' },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Práctica B07',
+        title: 'Verifica "Perú" en capitales con ciudad, ok := capitales["Perú"]',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'También ten presente que el orden al iterar un mapa es intencionalmente aleatorio para evitar dependencias ocultas. Aplica comma-ok buscando Perú en capitales dentro del editor de B07.',
+        visual: {
+          kind: 'terminal',
+          title: 'b07-maps · lookup exacto',
+          lines: [
+            { prompt: '$', text: 'ciudad, ok := capitales["Perú"]', tone: 'cmd' },
+            { text: 'Capital encontrada: Lima (ok == true)', tone: 'ok' },
+            { text: 'PASS · Modismo comma-ok verificado', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  B08: attachAudio({
+    id: 'LESSON-B08',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B08',
+    heading: 'Structs contiguos en memoria y composición limpia sobre herencia',
+    ctaLabel: 'Declarar Usuario struct abajo',
+    ctaHref: '#/lesson/B08',
+    scenes: [
+      {
+        chapter: '01 · Sin Herencia',
+        title: '¿Cómo modela Go entidades de negocio como Usuario sin jerarquías?',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'cyan',
+        speaker: 'host',
+        speech:
+          'Lección B08: structs. En programación orientada a objetos solemos crear clases con herencia profunda. ¿Cómo agrupa Go los campos de un dominio como Usuario sin usar herencia de clases?',
+        visual: {
+          kind: 'code-diff',
+          file: 'user.go',
+          before: [
+            '// Herencia rígida acoplada en árboles profundos',
+            'class Usuario extends PersonaBase { ... }',
+          ],
+          after: [
+            'type Usuario struct {',
+            '    Nombre string',
+            '    Edad   int',
+            '}',
+          ],
+          callout: 'Composición directa de campos sin vtables ni jerarquías frágiles.',
+        },
+      },
+      {
+        chapter: '02 · Layout Contiguo',
+        title: 'Campos contiguos para CPU cache friendly + composición limpia',
+        durationSec: 11,
+        mascot: 'architecture',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Un struct empaqueta campos tipados de forma contigua en memoria favoreciendo el rendimiento de la caché del procesador. Cuando necesitas reutilizar comportamiento, Go apuesta por composición limpia incrustando structs pequeños.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'Usuario en Memoria',
+          stackItems: [
+            { name: 'Nombre string', value: '"Gopher" (Exportado)', state: 'ok' },
+            { name: 'Edad int', value: '12 (Exportado)', state: 'ok' },
+          ],
+          heapLabel: 'Regla de Visibilidad Go',
+          heapItems: [
+            { addr: 'MAYÚSCULA', data: 'Público fuera del paquete', note: 'minúscula = privado al paquete' },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Práctica B08',
+        title: 'Define type Usuario struct e imprímelo con %+v',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Las mayúsculas en nombres como Nombre o Edad controlan automáticamente la visibilidad exportada del paquete. Declara type Usuario struct con Nombre string y Edad int para completar B08.',
+        visual: {
+          kind: 'terminal',
+          title: 'b08-structs · memoria limpia',
+          lines: [
+            { prompt: '$', text: 'fmt.Printf("Usuario: %+v\\n", u)', tone: 'cmd' },
+            { text: 'Usuario: {Nombre:Gopher Edad:12}', tone: 'ok' },
+            { text: 'PASS · Struct y campos exportados listos', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  B09: attachAudio({
+    id: 'LESSON-B09',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B09',
+    heading: 'Punteros seguros & y * para mutar estado sin aritmética peligrosa',
+    ctaLabel: 'Implementar incrementar(n *int)',
+    ctaHref: '#/lesson/B09',
+    scenes: [
+      {
+        chapter: '01 · Paso por Valor',
+        title: '¿Por qué &valor y *int no tienen los riesgos clásicos de C?',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Lección B09: punteros. Muchos temen los punteros porque en C permiten aritmética de memoria que corrompe buffers. ¿Por qué los punteros en Go son seguros y cuándo realmente necesitamos pasar una dirección?',
+        visual: {
+          kind: 'code-diff',
+          file: 'pointers.go',
+          before: [
+            'func incrementar(n int) { n += 1 } // solo muta copia local',
+          ],
+          after: [
+            'func incrementar(n *int) { *n += 1 }',
+            'incrementar(&valor) // modifica valor original de 10 a 11',
+          ],
+          callout: 'Go prohíbe ptr + 1: tienes control de referencia sin buffer overflows.',
+        },
+      },
+      {
+        chapter: '02 · Dirección & y Valor *',
+        title: 'Mutar original o evitar copias grandes con análisis de escape',
+        durationSec: 12,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Go pasa todos los argumentos por valor, así que modificar una variable externa o evitar copiar una estructura pesada requiere pasar su dirección con ampersand y desreferenciar con asterisco, siempre sin aritmética arbitraria de punteros.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'main() vs incrementar()',
+          stackItems: [
+            { name: 'valor (main)', value: '10 -> 11', state: 'ok' },
+            { name: 'n *int', value: 'Apunta a &valor', state: 'borrow' },
+          ],
+          heapLabel: 'Escape Analysis Automático',
+          heapItems: [
+            { addr: 'SAFE-GC', data: 'Si el puntero no escapa, sigue en Stack', note: 'Sin dangling pointers' },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Práctica B09',
+        title: 'Completa func incrementar(n *int) con *n += 1 en B09',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'El recolector de basura rastrea esas referencias y el escape analysis decide si viven en Stack o Heap. Implementa incrementar(n *int) usando *n += 1 e invócala desde main en B09.',
+        visual: {
+          kind: 'terminal',
+          title: 'b09-pointers · go run',
+          lines: [
+            { prompt: '$', text: 'valor := 10; incrementar(&valor)', tone: 'cmd' },
+            { text: 'Valor incrementado: 11', tone: 'ok' },
+            { text: 'PASS · Referencia & y desreferencia * dominadas', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  B10: attachAudio({
+    id: 'LESSON-B10',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B10',
+    heading: 'Métodos en Go: receptor por valor (r T) frente a puntero (r *T)',
+    ctaLabel: 'Escribir Area() float64 en B10',
+    ctaHref: '#/lesson/B10',
+    scenes: [
+      {
+        chapter: '01 · Sin Clases',
+        title: '¿Cuándo usar receptor por valor frente a receptor por puntero?',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'violet',
+        speaker: 'host',
+        speech:
+          'Lección B10: métodos e interfaces base. Como Go no tiene clases, los métodos se declaran fuera del struct indicando un receptor antes del nombre. ¿Cuándo elegimos receptor por valor frente a puntero?',
+        visual: {
+          kind: 'code-diff',
+          file: 'methods.go',
+          before: [
+            'func Area(r Rectangulo) float64 // función suelta sin método',
+          ],
+          after: [
+            'func (r Rectangulo) Area() float64 {',
+            '    return r.Ancho * r.Alto',
+            '}',
+          ],
+          callout: 'Receptor por valor = lectura inmutable segura; puntero = mutación.',
+        },
+      },
+      {
+        chapter: '02 · Criterio de Diseño',
+        title: 'Lectura segura por valor vs mutación compartida y sync.Mutex',
+        durationSec: 11,
+        mascot: 'architecture',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Si el método solo lee campos pequeños sin mutar el estado, un receptor por valor es seguro e idóneo frente a concurrencia. Si el método modifica atributos internos o maneja mutexes, debes usar siempre receptor por puntero.',
+        visual: {
+          kind: 'architecture',
+          mode: 'mitigated',
+          nodes: [
+            { label: '(r Rectangulo)', sub: 'Solo lectura · inmutable', state: 'ok' },
+            { label: '(c *Cuenta)', sub: 'Muta Saldo o tiene Mutex', state: 'ok' },
+            { label: 'Interfaces Go', sub: 'Cualquier tipo puede cumplirlas', state: 'ok' },
+          ],
+          metricLabel: 'Puente a I01 y Senior Mode',
+          metricBefore: 'Confundir copias con mutaciones',
+          metricAfter: 'Semántica de receptor cristalina ✓',
+        },
+      },
+      {
+        chapter: '03 · Práctica B10',
+        title: 'Implementa func (r Rectangulo) Area() float64 y compruébalo',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Implementa ahora Area() float64 sobre Rectangulo con receptor por valor en B10, preparando el terreno directo para las interfaces implícitas de I01 y Senior Mode.',
+        visual: {
+          kind: 'terminal',
+          title: 'b10-methods · verificación',
+          lines: [
+            { prompt: '$', text: 'rect := Rectangulo{Ancho: 10, Alto: 5}; rect.Area()', tone: 'cmd' },
+            { text: 'Área: 50', tone: 'ok' },
+            { text: 'PASS · Receptor por valor listo', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  B11: attachAudio({
+    id: 'LESSON-B11',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B11',
+    heading: 'Errores explícitos como valor (errors.New) y limpieza LIFO con defer',
+    ctaLabel: 'Validar saldo y defer en B11',
+    ctaHref: '#/lesson/B11',
+    scenes: [
+      {
+        chapter: '01 · Cero Excepciones',
+        title: '¿Cómo controla Go errores y cierre de recursos sin try/catch/finally?',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Lección B11: errores y defer. En otros lenguajes una excepción puede saltar varias capas sin avisar y olvidar cerrar un archivo. ¿Cómo evita Go tanto excepciones ocultas como fugas de recursos?',
+        visual: {
+          kind: 'code-diff',
+          file: 'errors_defer.go',
+          before: [
+            'f.Close() // si hay return temprano antes, el recurso se filtra',
+          ],
+          after: [
+            'defer fmt.Println("Operación finalizada.")',
+            'if err := validarSaldo(-5); err != nil {',
+            '    return errors.New("saldo no puede ser negativo")',
+            '}',
+          ],
+          callout: 'defer se ejecuta garantizado justo al retornar la función.',
+        },
+      },
+      {
+        chapter: '02 · Error = Valor + LIFO',
+        title: 'Control inmediato if err != nil y pila de diferidos LIFO',
+        durationSec: 12,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'En Go un error es simplemente un valor retornado con errors.New y verificado explícitamente con if err != nil justo donde ocurre; y defer agenda la limpieza garantizada en orden LIFO al salir de la función.',
+        visual: {
+          kind: 'lanes',
+          mode: 'ordered',
+          laneA: {
+            name: 'Flujo Normal / Error',
+            steps: ['if saldo < 0 -> errors.New(...)', 'Controlado explícitamente en el caller'],
+          },
+          laneB: {
+            name: 'Pila defer (LIFO)',
+            steps: ['defer cleanup()', 'Garantizado en cada camino de salida'],
+          },
+          statusBadge: 'DETERMINISTA · Cero fugas de archivos, sockets ni locks',
+        },
+      },
+      {
+        chapter: '03 · Práctica B11',
+        title: 'Combina errors.New y defer para completar B11 hacia el proyecto Mini Bank',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Así cada cierre de archivo, lock o transacción SQL vive junto a su apertura sin perderse entre try-finally enormes. Retorna errors.New ante saldo negativo y usa defer en B11.',
+        visual: {
+          kind: 'terminal',
+          title: 'b11-errors-defer · camino a S01',
+          lines: [
+            { prompt: '$', text: 'go run errors_defer.go', tone: 'cmd' },
+            { text: 'Error: saldo no puede ser negativo', tone: 'warn' },
+            { text: 'Operación finalizada. (defer ejecutado ✓)', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
 };
 
 export function getLessonCinemaDeck(lessonId: string): CinemaDeck | undefined {
