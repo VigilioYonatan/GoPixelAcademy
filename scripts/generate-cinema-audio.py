@@ -146,8 +146,20 @@ def clean_for_speech(text: str) -> str:
         ("S17", "ese diecisiete"),
         ("S18", "ese dieciocho"),
         ("B01", "be cero uno"),
+        ("B02", "be cero dos"),
+        ("B03", "be cero tres"),
+        ("B04", "be cero cuatro"),
+        ("B05", "be cero cinco"),
+        ("B06", "be cero seis"),
         ("I01", "i cero uno"),
         ("A01", "a cero uno"),
+        ("float64(peso)", "float sesenta y cuatro de peso"),
+        ("float64", "float sesenta y cuatro"),
+        ("make([]int, 0, 5)", "make de slice entero con cero longitud y cinco de capacidad"),
+        ("dividir(a, b int)", "dividir a y b enteros"),
+        ("(int, int)", "dos enteros"),
+        ("append()", "append"),
+        ("fmt.Printf", "efe eme te punto Print efe"),
         ("M:N", "eme a ene"),
     ]
     out = text
@@ -958,8 +970,125 @@ def build_batch_5_scripts() -> dict[str, tuple[str, list[dict]]]:
     return decks
 
 
+def build_batch_6_scripts() -> dict[str, tuple[str, list[dict]]]:
+    """Next 5 Basic track capsules: LESSON-B02, LESSON-B03, LESSON-B04, LESSON-B05, LESSON-B06."""
+    decks: dict[str, tuple[str, list[dict]]] = {}
+
+    # 26. LESSON-B02 (Variables :=, var y constantes const)
+    decks["LESSON-B02"] = (
+        "lesson-b02.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B02: variables y constantes. Vemos códigos en Go usando var con tipo explícito y otros más cortos con dos puntos igual. ¿Cuál conviene usar y qué cambia cuando declaras una constante?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Dentro de cualquier función usa la declaración corta con inferencia estática de tipo, mientras que var a nivel de paquete garantiza un valor cero seguro y const congela valores exactos en tiempo de compilación.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Recuerda que Go prohíbe variables locales sin usar desde el minuto cero para evitar código muerto. En el editor inferior declara edad igual a veinticinco y const pi igual a tres punto catorce para validar B02.",
+            },
+        ],
+    )
+
+    # 27. LESSON-B03 (Tipos de datos y conversión explícita)
+    decks["LESSON-B03"] = (
+        "lesson-b03.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B03: tipos de datos. Si intento sumar un entero y un decimal en Go, el compilador falla en seco sin convertir automáticamente. ¿Por qué Go es tan estricto con los tipos numéricos?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Porque las conversiones implícitas ocultan pérdidas de precisión y desbordamientos silenciosos en producción. En Go todo cambio entre tipos numéricos exige una conversión explícita escribiendo el tipo destino como float64(peso).",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Además los strings en Go son secuencias inmutables de bytes en UTF-8 y toda variable no inicializada nace con su cero seguro. Convierte peso a float64 en el editor y supera B03.",
+            },
+        ],
+    )
+
+    # 28. LESSON-B04 (Condicionales y bucle único for)
+    decks["LESSON-B04"] = (
+        "lesson-b04.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B04: condicionales y bucles. Revisando el lenguaje noté que no existen palabras clave como while ni do-while, y que switch tampoco exige escribir break en cada caso. ¿Cómo se controla el flujo en Go?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Go unifica toda iteración en una sola palabra clave: for clásico con índice, for condicional equivalente a while, o bucle infinito controlado con break; y cada switch corta por defecto al terminar su rama.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Incluso puedes iniciar variables locales justo dentro del if reduciendo su alcance y limpieza visual. Escribe un for del uno al cinco acumulando en total para completar B04.",
+            },
+        ],
+    )
+
+    # 29. LESSON-B05 (Funciones y retorno múltiple)
+    decks["LESSON-B05"] = (
+        "lesson-b05.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B05: funciones. En otros lenguajes para devolver dos resultados terminas creando clases wrapper o tuplas raras. ¿Cómo logra Go APIs tan limpias al devolver resultado y error juntos?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Las funciones en Go soportan múltiples valores de retorno de forma nativa en su firma, y esa base permite el famoso patrón de resultado más error con retorno temprano guardando caminos limpios.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Define ahora dividir(a, b int) devolviendo ambos enteros cociente y resto en el editor de B05, un hábito que luego usarás en cada handler HTTP y servicio de Senior Mode.",
+            },
+        ],
+    )
+
+    # 30. LESSON-B06 (Arrays, slices, len y cap)
+    decks["LESSON-B06"] = (
+        "lesson-b06.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B06: arrays y slices. Casi todo el código Go real usa slices dinámicos en lugar de arrays fijos, pero muchos confunden longitud con capacidad cuando llaman a append.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Un slice es una pequeña cabecera con tres campos: puntero al arreglo subyacente, longitud actual y capacidad máxima reservada; al preasignar con make([]int, 0, 5) evitas realojos innecesarios en memoria.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Presta atención en B06 porque este mismo mecanismo de cabecera compartida explica las fugas de memoria que resolverás después en Senior S07. Preasigna el slice y agrega diez y veinte con append.",
+            },
+        ],
+    )
+
+    return decks
+
+
 async def main() -> None:
-    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch5"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch6"
     AUDIO_OUT_DIR.mkdir(parents=True, exist_ok=True)
     if mode == "--all":
         decks = {
@@ -968,6 +1097,7 @@ async def main() -> None:
             **build_batch_3_scripts(),
             **build_batch_4_scripts(),
             **build_batch_5_scripts(),
+            **build_batch_6_scripts(),
         }
     elif mode == "--batch1":
         decks = build_batch_1_scripts()
@@ -977,8 +1107,10 @@ async def main() -> None:
         decks = build_batch_3_scripts()
     elif mode == "--batch4":
         decks = build_batch_4_scripts()
-    else:
+    elif mode == "--batch5":
         decks = build_batch_5_scripts()
+    else:
+        decks = build_batch_6_scripts()
     print(f"🎙️ Generando {len(decks)} pistas de audio neuronal HD + mastering de estudio con {FFMPEG}...")
     sem = asyncio.Semaphore(5)
 

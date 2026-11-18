@@ -41,7 +41,10 @@ export function cleanForSpeech(text: string): string {
     .replace(/POST \/orders/g, 'POST barra orders')
     .replace(/application\/json/g, 'application barra json')
     .replace(/WaitGroup/g, 'Wait Group')
-    .replace(/ServeMux/g, 'Serve Mux');
+    .replace(/ServeMux/g, 'Serve Mux')
+    .replace(/float64\(peso\)/g, 'float sesenta y cuatro de peso')
+    .replace(/float64/g, 'float sesenta y cuatro')
+    .replace(/make\(\[\]int, 0, 5\)/g, 'make de slice entero cero cinco');
 }
 
 export function isSpeechSupported(): boolean {

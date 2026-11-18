@@ -1868,6 +1868,385 @@ const LESSON_ANCHOR_DECKS: Record<string, CinemaDeck> = {
       },
     ],
   }),
+
+  B02: attachAudio({
+    id: 'LESSON-B02',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B02',
+    heading: 'Variables :=, var con cero seguro y constantes const',
+    ctaLabel: 'Declarar edad y pi abajo',
+    ctaHref: '#/lesson/B02',
+    scenes: [
+      {
+        chapter: '01 · := vs var',
+        title: '¿Cuándo usar inferencia corta :=, var explícito o const?',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'gold',
+        speaker: 'host',
+        speech:
+          'Lección B02: variables y constantes. Vemos códigos en Go usando var con tipo explícito y otros más cortos con dos puntos igual. ¿Cuál conviene usar y qué cambia cuando declaras una constante?',
+        visual: {
+          kind: 'code-diff',
+          file: 'variables.go',
+          before: [
+            'var sinUso int = 10 // error de compilación en Go',
+            'var contador int    // cero seguro: 0',
+          ],
+          after: [
+            'edad := 25          // inferencia estática int',
+            'const pi = 3.14     // inmutable en compile-time',
+          ],
+          callout: ':= solo vive dentro de funciones; const garantiza inmutabilidad.',
+        },
+      },
+      {
+        chapter: '02 · Alcance y Seguridad',
+        title: 'Cero seguro automático e inferencia estática sin overhead',
+        durationSec: 11,
+        mascot: 'reading',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Dentro de cualquier función usa la declaración corta con inferencia estática de tipo, mientras que var a nivel de paquete garantiza un valor cero seguro y const congela valores exactos en tiempo de compilación.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'Reglas del Compilador Go',
+          stackItems: [
+            { name: 'edad := 25', value: 'int (inferido)', state: 'ok' },
+            { name: 'var total int', value: '0 (cero seguro)', state: 'ok' },
+            { name: 'const pi', value: '3.14 (inmutable)', state: 'ok' },
+          ],
+          heapLabel: 'Higiene automática',
+          heapItems: [
+            { addr: 'ZERO-VAL', data: 'Jamás hay basura sin inicializar', note: '"" · 0 · false · nil' },
+            { addr: 'CLEAN', data: 'Variable sin usar = error compile-time', note: 'Código más limpio' },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Práctica B02',
+        title: 'Declara edad := 25 y const pi = 3.14 en el editor Go',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Recuerda que Go prohíbe variables locales sin usar desde el minuto cero para evitar código muerto. En el editor inferior declara edad igual a veinticinco y const pi igual a tres punto catorce para validar B02.',
+        visual: {
+          kind: 'terminal',
+          title: 'b02-variables · go run',
+          lines: [
+            { prompt: '$', text: 'go run variables.go', tone: 'cmd' },
+            { text: 'Edad: 25, Pi: 3.14', tone: 'ok' },
+            { text: 'PASS · Declaración corta y const verificadas', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  B03: attachAudio({
+    id: 'LESSON-B03',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B03',
+    heading: 'Tipado fuerte en Go: conversión explícita y strings UTF-8',
+    ctaLabel: 'Convertir peso con float64(peso)',
+    ctaHref: '#/lesson/B03',
+    scenes: [
+      {
+        chapter: '01 · Tipado Estricto',
+        title: '¿Por qué Go rechaza mezclar int con float64 sin conversión?',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Lección B03: tipos de datos. Si intento sumar un entero y un decimal en Go, el compilador falla en seco sin convertir automáticamente. ¿Por qué Go es tan estricto con los tipos numéricos?',
+        visual: {
+          kind: 'code-diff',
+          file: 'types.go',
+          before: [
+            'var peso int = 70',
+            'var factor float64 = 1.5',
+            'res := peso * factor // FAIL: mismatched types int and float64',
+          ],
+          after: [
+            'pesoFloat := float64(peso)',
+            'res := pesoFloat * factor // OK: 105.0 explícito',
+          ],
+          callout: 'Cero magia implícita: cada conversión numérica es visible en código.',
+        },
+      },
+      {
+        chapter: '02 · Precisión y UTF-8',
+        title: 'Conversiones explícitas T(v) evitan truncamientos silenciosos',
+        durationSec: 11,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Porque las conversiones implícitas ocultan pérdidas de precisión y desbordamientos silenciosos en producción. En Go todo cambio entre tipos numéricos exige una conversión explícita escribiendo el tipo destino como float64(peso).',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'Tipos Fundamentales Go',
+          stackItems: [
+            { name: 'int / int64', value: 'Enteros precisos', state: 'ok' },
+            { name: 'float64', value: 'IEEE 754 explícito', state: 'ok' },
+            { name: 'string', value: 'Bytes UTF-8 inmutable', state: 'ok' },
+          ],
+          heapLabel: 'Ventaja en producción',
+          heapItems: [
+            { addr: 'SAFETY', data: 'Sin bugs de promoción implícita int->float', note: 'Detectado en build' },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Práctica B03',
+        title: 'Aplica float64(peso) y comprueba la salida limpia',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Además los strings en Go son secuencias inmutables de bytes en UTF-8 y toda variable no inicializada nace con su cero seguro. Convierte peso a float64 en el editor y supera B03.',
+        visual: {
+          kind: 'terminal',
+          title: 'b03-types · compile check',
+          lines: [
+            { prompt: '$', text: 'go run types.go', tone: 'cmd' },
+            { text: 'pesoFloat := float64(peso) -> 70', tone: 'ok' },
+            { text: 'PASS · Tipado fuerte dominado', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  B04: attachAudio({
+    id: 'LESSON-B04',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B04',
+    heading: 'Control de flujo limpio: bucle único for, if corto y switch',
+    ctaLabel: 'Completar bucle for 1..5',
+    ctaHref: '#/lesson/B04',
+    scenes: [
+      {
+        chapter: '01 · Minimalismo Go',
+        title: 'Sin while, sin do-while y sin break redundantes en switch',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'violet',
+        speaker: 'host',
+        speech:
+          'Lección B04: condicionales y bucles. Revisando el lenguaje noté que no existen palabras clave como while ni do-while, y que switch tampoco exige escribir break en cada caso. ¿Cómo se controla el flujo en Go?',
+        visual: {
+          kind: 'code-diff',
+          file: 'control.go',
+          before: [
+            'while (i <= 5) { ... }      // No existe en Go',
+            'switch v { case 1: ...; break } // break innecesario',
+          ],
+          after: [
+            'for i := 1; i <= 5; i++ { total += i }',
+            'for ok { ... }              // sustituye a while',
+            'if err := run(); err != nil { return err }',
+          ],
+          callout: 'Una sola palabra clave for cubre todas las formas de iteración.',
+        },
+      },
+      {
+        chapter: '02 · Alcance Reducido',
+        title: 'Tres sabores de for y switch seguro sin fallthrough accidental',
+        durationSec: 11,
+        mascot: 'reading',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Go unifica toda iteración en una sola palabra clave: for clásico con índice, for condicional equivalente a while, o bucle infinito controlado con break; y cada switch corta por defecto al terminar su rama.',
+        visual: {
+          kind: 'lanes',
+          mode: 'ordered',
+          laneA: {
+            name: 'Formas de for en Go',
+            steps: ['for i := 1; i <= 5; i++', 'for cond {} · for range slice'],
+          },
+          laneB: {
+            name: 'if y switch limpios',
+            steps: ['if x := fn(); x > 0', 'switch rompe solo al cerrar case'],
+          },
+          statusBadge: 'MENOS PALABRAS CLAVE · Cero fallthrough por descuido',
+        },
+      },
+      {
+        chapter: '03 · Práctica B04',
+        title: 'Suma 1..5 en total usando un bucle for clásico',
+        durationSec: 10,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Incluso puedes iniciar variables locales justo dentro del if reduciendo su alcance y limpieza visual. Escribe un for del uno al cinco acumulando en total para completar B04.',
+        visual: {
+          kind: 'terminal',
+          title: 'b04-loops · verificación',
+          lines: [
+            { prompt: '$', text: 'go run control.go', tone: 'cmd' },
+            { text: 'Total: 15 (1 + 2 + 3 + 4 + 5)', tone: 'ok' },
+            { text: 'PASS · Flujo e iteración validados', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  B05: attachAudio({
+    id: 'LESSON-B05',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B05',
+    heading: 'Funciones idiomáticas con retorno múltiple y camino feliz lineal',
+    ctaLabel: 'Implementar dividir(a, b int)',
+    ctaHref: '#/lesson/B05',
+    scenes: [
+      {
+        chapter: '01 · Dos Resultados',
+        title: 'Devolver valor y segundo resultado sin crear tuplas ni wrappers',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'gold',
+        speaker: 'host',
+        speech:
+          'Lección B05: funciones. En otros lenguajes para devolver dos resultados terminas creando clases wrapper o tuplas raras. ¿Cómo logra Go APIs tan limpias al devolver resultado y error juntos?',
+        visual: {
+          kind: 'code-diff',
+          file: 'funcs.go',
+          before: [
+            'type DivResult struct { Q int; R int } // boilerplate innecesario',
+          ],
+          after: [
+            'func dividir(a, b int) (int, int) {',
+            '    return a / b, a % b',
+            '}',
+          ],
+          callout: 'Misma sintaxis que después habilita (T, error) en todo Go.',
+        },
+      },
+      {
+        chapter: '02 · Retorno Temprano',
+        title: 'Base de la filosofía idiomática Go para manejar errores explícitos',
+        durationSec: 11,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Las funciones en Go soportan múltiples valores de retorno de forma nativa en su firma, y esa base permite el famoso patrón de resultado más error con retorno temprano guardando caminos limpios.',
+        visual: {
+          kind: 'architecture',
+          mode: 'mitigated',
+          nodes: [
+            { label: 'Firma Go', sub: 'func(in) (T, error)', state: 'ok' },
+            { label: 'Guard Clause', sub: 'if err != nil { return }', state: 'ok' },
+            { label: 'Camino Feliz', sub: 'Sin try/catch ocultos', state: 'ok' },
+          ],
+          metricLabel: 'Legibilidad en producción',
+          metricBefore: 'Excepciones invisibles o anidación',
+          metricAfter: 'Flujo lineal y predecible ✓',
+        },
+      },
+      {
+        chapter: '03 · Práctica B05',
+        title: 'Retorna cociente y resto en dividir(a, b int) (int, int)',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Define ahora dividir(a, b int) devolviendo ambos enteros cociente y resto en el editor de B05, un hábito que luego usarás en cada handler HTTP y servicio de Senior Mode.',
+        visual: {
+          kind: 'terminal',
+          title: 'b05-functions · go run',
+          lines: [
+            { prompt: '$', text: 'c, r := dividir(10, 3)', tone: 'cmd' },
+            { text: 'Cociente: 3, Resto: 1', tone: 'ok' },
+            { text: 'PASS · Retorno múltiple listo', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  B06: attachAudio({
+    id: 'LESSON-B06',
+    kicker: 'FUNDAMENTOS GO · LECCIÓN B06',
+    heading: 'Slices en Go: cabecera {ptr, len, cap}, make y append',
+    ctaLabel: 'Preasignar slice en B06',
+    ctaHref: '#/lesson/B06',
+    scenes: [
+      {
+        chapter: '01 · Len vs Cap',
+        title: '¿Por qué los slices reemplazan casi siempre a los arrays fijos?',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'cyan',
+        speaker: 'host',
+        speech:
+          'Lección B06: arrays y slices. Casi todo el código Go real usa slices dinámicos en lugar de arrays fijos, pero muchos confunden longitud con capacidad cuando llaman a append.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'problem',
+          stackLabel: 'Slice sin capacidad previa',
+          stackItems: [
+            { name: 'len / cap inicial', value: '0 -> 1 -> 2 -> 4', state: 'moved' },
+          ],
+          heapLabel: 'Costo sin make([]int, 0, N)',
+          heapItems: [
+            { addr: 'REALLOC x4', data: 'Múltiples copias al crecer append()', note: 'Presión extra al GC', alert: true },
+          ],
+        },
+      },
+      {
+        chapter: '02 · Slice Header',
+        title: 'Tres palabras en memoria: ptr, len y cap con make preasignado',
+        durationSec: 11,
+        mascot: 'architecture',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Un slice es una pequeña cabecera con tres campos: puntero al arreglo subyacente, longitud actual y capacidad máxima reservada; al preasignar con make([]int, 0, 5) evitas realojos innecesarios en memoria.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'Slice Header (24 bytes)',
+          stackItems: [
+            { name: 'ptr *int', value: 'Apunta a [5]int', state: 'ok' },
+            { name: 'len', value: '2 elementos activos', state: 'ok' },
+            { name: 'cap', value: '5 reservados', state: 'ok' },
+          ],
+          heapLabel: 'Backing Array contiguo',
+          heapItems: [
+            { addr: '0x10..0x24', data: '[10, 20, _, _, _]', note: '0 copias al hacer append hasta cap=5' },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Puente a Senior S07',
+        title: 'Preasigna con make([]int, 0, 5) y añade 10 y 20 con append',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Presta atención en B06 porque este mismo mecanismo de cabecera compartida explica las fugas de memoria que resolverás después en Senior S07. Preasigna el slice y agrega diez y veinte con append.',
+        visual: {
+          kind: 'terminal',
+          title: 'b06-slices · resultado en vivo',
+          lines: [
+            { prompt: '$', text: 'numeros := make([]int, 0, 5); numeros = append(numeros, 10, 20)', tone: 'cmd' },
+            { text: 'Slice: [10 20], Len: 2, Cap: 5', tone: 'ok' },
+            { text: 'PASS · Base lista para escape analysis en S07', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
 };
 
 export function getLessonCinemaDeck(lessonId: string): CinemaDeck | undefined {

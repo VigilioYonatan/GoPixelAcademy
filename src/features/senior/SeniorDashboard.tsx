@@ -292,7 +292,7 @@ export function SeniorDashboard({
               <span>{t.kpiSimulators}</span>
             </div>
             <div class="senior-kpi-item">
-              <strong>25</strong>
+              <strong>30</strong>
               <span>{t.kpiVideos}</span>
             </div>
             <div class="senior-kpi-item">
