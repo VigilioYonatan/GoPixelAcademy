@@ -46,6 +46,9 @@ def clean_for_speech(text: str) -> str:
         ("errors.New", "errors punto new"),
         ("strconv.Atoi", "string conv punto a to i"),
         ("strings.Builder", "strings punto Builder"),
+        ("filepath.Clean", "filepath punto Clean"),
+        ("time.Sleep", "time punto Sleep"),
+        ("FakeClock", "reloj simulado Fake Clock"),
         ("ctx.Done()", "context punto done"),
         ("<-ctx.Done()", "el canal context punto done"),
         ("context.Context", "context punto Context"),
@@ -56,6 +59,15 @@ def clean_for_speech(text: str) -> str:
         ("go test -race ./...", "go test guion race en todos los paquetes"),
         ("go test -race", "go test guion race"),
         ("go test", "go test"),
+        ("at-least-once", "entrega al menos una vez"),
+        ("exactly-once", "entrega exactamente una vez"),
+        ("exponential backoff con jitter", "retroceso exponencial con jitter aleatorio"),
+        ("retry storm", "tormenta de reintentos"),
+        ("circuit breaker", "cortacircuitos"),
+        ("path traversal", "escalado de directorios"),
+        ("symlinks", "enlaces simbólicos"),
+        ("flaky tests", "pruebas inestables"),
+        ("SQL", "ese cu ele"),
         ("happens-before", "happens before"),
         ("table-driven", "basadas en tablas"),
         ("backpressure", "contrapresión"),
@@ -564,15 +576,134 @@ def build_batch_2_scripts() -> dict[str, tuple[str, list[dict]]]:
     return decks
 
 
+def build_batch_3_scripts() -> dict[str, tuple[str, list[dict]]]:
+    """Third 5 studio capsules: SENIOR-S09, SENIOR-S10, SENIOR-S11, SENIOR-S12, SENIOR-S13."""
+    decks: dict[str, tuple[str, list[dict]]] = {}
+
+    # 11. SENIOR-S09 (Sistemas distribuidos, at-least-once y deduplicación)
+    decks["SENIOR-S09"] = (
+        "senior-s09.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S09: sistemas distribuidos. Nuestra cola reenvía eventos fuera de orden y en ocasiones repetidos, duplicando envíos a clientes. ¿No bastaría guardar los IDs vistos en un mapa de Go?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Un mapa en memoria solo protege una réplica y desaparece al reiniciar el contenedor. Con entrega at-least-once real, necesitas una clave de deduplicación durable compartida por todas las instancias.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Define ventana de expiración, diseña consumidores idempotentes sin asumir orden global y comprueba eventos repetidos y desordenados ejecutando go test -race en tus pruebas.",
+            },
+        ],
+    )
+
+    # 12. SENIOR-S10 (Datos, consistencia e inventario sin sobreventa)
+    decks["SENIOR-S10"] = (
+        "senior-s10.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S10: datos y consistencia. Quedaba una última unidad en stock y dos compradores la adquirieron a la vez dejando el inventario en menos uno, pese a usar sync.Mutex en el servidor Go.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "El clásico fallo en escalado horizontal: un mutex local en memoria no coordina varias réplicas del servicio, ni tampoco validar en una lectura y descontar en otra transacción distinta.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Combina validación y descuento de forma atómica en la base de datos con bloqueos, nivel de aislamiento o actualización condicional, verificando bajo compradores simultáneos con go test -race.",
+            },
+        ],
+    )
+
+    # 13. SENIOR-S11 (Resiliencia, backoff con jitter y presupuesto de reintentos)
+    decks["SENIOR-S11"] = (
+        "senior-s11.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S11: resiliencia y fallos parciales. Un microservicio aguas abajo tardó dos segundos extra en responder y los reintentos automáticos multiplicaron por cinco el tráfico hasta tumbar todo el clúster.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Reintentar en bucle sin freno genera amplificación inmediata y convierte un tropiezo leve en una caída total. Los timeouts deben caber dentro del presupuesto extremo a extremo de la petición.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Aplica exponential backoff con jitter para espaciar ráfagas, limita el presupuesto de reintentos solo a operaciones idempotentes y fija políticas claras de apertura en tu circuit breaker.",
+            },
+        ],
+    )
+
+    # 14. SENIOR-S12 (Seguridad backend, SQL parametrizado y path traversal)
+    decks["SENIOR-S12"] = (
+        "senior-s12.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S12: seguridad backend. Un endpoint permite descargar facturas enviando un nombre de archivo y el auditor señaló riesgo crítico de lectura arbitraria aunque ya llamábamos a filepath.Clean.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Mucho cuidado: filepath.Clean por sí solo no bloquea rutas absolutas ni escapes mediante symlinks maliciosos. Además, siempre debemos verificar permisos por objeto y nunca exponer secretos al cliente.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Rechaza escapes léxicos y enlaces simbólicos fuera de la raíz segura, usa placeholders parametrizados en SQL y prueba casos hostiles como punto punto barra en go test -race.",
+            },
+        ],
+    )
+
+    # 15. SENIOR-S13 (Testing complejo, reloj inyectado y cero flaky tests)
+    decks["SENIOR-S13"] = (
+        "senior-s13.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S13: testing de sistemas complejos. Nuestra suite tarda doce minutos y falla al azar en integración continua porque varios tests esperan expiraciones reales con time.Sleep.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Nunca apagues flaky tests para publicar ni dependas del reloj real del sistema. Inyecta una interfaz de reloj en tus componentes para separar el tiempo de negocio de la infraestructura.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Con un FakeClock determinista avanzas horas en microsegundos, verificas el instante exacto anterior y posterior al vencimiento y combinas fuzzing con go test -race sin pausas frágiles.",
+            },
+        ],
+    )
+
+    return decks
+
+
 async def main() -> None:
-    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch2"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch3"
     AUDIO_OUT_DIR.mkdir(parents=True, exist_ok=True)
     if mode == "--all":
-        decks = {**build_batch_1_scripts(), **build_batch_2_scripts()}
+        decks = {**build_batch_1_scripts(), **build_batch_2_scripts(), **build_batch_3_scripts()}
     elif mode == "--batch1":
         decks = build_batch_1_scripts()
-    else:
+    elif mode == "--batch2":
         decks = build_batch_2_scripts()
+    else:
+        decks = build_batch_3_scripts()
     print(f"🎙️ Generando {len(decks)} pistas de audio neuronal HD + mastering de estudio con {FFMPEG}...")
     sem = asyncio.Semaphore(5)
 

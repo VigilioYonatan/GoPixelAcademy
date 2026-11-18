@@ -140,5 +140,75 @@
       "gopher",
       "gopher"
     ]
+  },
+  "SENIOR-S09": {
+    "src": "audio/senior-s09.mp3",
+    "totalSec": 34.45,
+    "cues": [
+      0.45,
+      12.41,
+      23.71
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "SENIOR-S10": {
+    "src": "audio/senior-s10.mp3",
+    "totalSec": 32.84,
+    "cues": [
+      0.45,
+      11.93,
+      21.64
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "SENIOR-S11": {
+    "src": "audio/senior-s11.mp3",
+    "totalSec": 33.06,
+    "cues": [
+      0.45,
+      12.13,
+      21.8
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "SENIOR-S12": {
+    "src": "audio/senior-s12.mp3",
+    "totalSec": 34.53,
+    "cues": [
+      0.45,
+      11.75,
+      23.6
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "SENIOR-S13": {
+    "src": "audio/senior-s13.mp3",
+    "totalSec": 32.42,
+    "cues": [
+      0.45,
+      11.05,
+      20.61
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
   }
 }
