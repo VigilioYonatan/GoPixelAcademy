@@ -420,6 +420,390 @@ const SENIOR_MODULE_DECKS: Record<string, CinemaDeck> = {
       },
     ],
   }),
+
+  S04: attachAudio({
+    id: 'SENIOR-S04',
+    kicker: 'BRIEFING S04 · MODELADO DE DOMINIO',
+    heading: 'S04 · Máquinas de estados e invariantes atómicas en Order',
+    ctaLabel: 'Abrir Decision Lab (G1)',
+    ctaHref: '#/senior/S04/decision-lab',
+    scenes: [
+      {
+        chapter: '01 · Fuga de Reglas',
+        title: 'Cambios de estado en handlers HTTP provocan órdenes inválidas',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Caso S04: modelado del dominio. El controlador HTTP cambia el estado de un pedido directamente y terminan marcando órdenes como canceladas después de haberse pagado. ¿Cómo protegemos esas reglas?',
+        visual: {
+          kind: 'architecture',
+          mode: 'incident',
+          nodes: [
+            { label: 'HTTP Handler', sub: 'o.State = Cancelled', state: 'hot' },
+            { label: 'Sin Invariantes', sub: 'Paid -> Cancelled ⚠', state: 'hot' },
+            { label: 'Base de Datos', sub: 'Pedido cobrado anulado', state: 'hot' },
+          ],
+          metricLabel: 'Integridad del agregado',
+          metricBefore: 'Estado mutable',
+          metricAfter: 'Máquina de estados en dominio',
+        },
+      },
+      {
+        chapter: '02 · Máquina de Estados',
+        title: 'Transiciones explícitas dentro del método Transition()',
+        durationSec: 12,
+        mascot: 'building',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Sacamos la máquina de estados del handler y la encerramos en métodos atómicos del agregado Order. Si un pedido ya está en Paid o Cancelled, cualquier transición inválida debe rechazarse antes de tocar datos.',
+        visual: {
+          kind: 'code-diff',
+          file: 's04-domain-state/order.go',
+          before: [
+            'func CancelHandler(o *Order) { o.State = Cancelled }',
+          ],
+          after: [
+            'func (o *Order) Transition(next OrderState) error {',
+            '  if o.State == Paid && next != Paid { return ErrImmutable }',
+            '  o.State = next; return nil',
+            '}',
+          ],
+          callout: 'Pending -> Paid/Cancelled · Paid/Cancelled son inmutables.',
+        },
+      },
+      {
+        chapter: '03 · Pruebas Límite',
+        title: 'Validar transiciones repetidas y estados desconocidos',
+        durationSec: 11,
+        mascot: 'graduate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Protege el límite de consistencia probando transiciones válidas, inválidas y repetidas en go test -race, documentando cada precondición en tu documento de arquitectura.',
+        visual: {
+          kind: 'terminal',
+          title: 's04-domain-state · state verification',
+          lines: [
+            { prompt: '$', text: 'go test -race ./s04-domain-state', tone: 'cmd' },
+            { text: 'Pending -> Paid: nil | Paid -> Cancelled: error', tone: 'ok' },
+            { text: 'Unknown state -> Paid: rejected cleanly', tone: 'ok' },
+            { text: 'PASS · Invariante preservada en el agregado', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  S05: attachAudio({
+    id: 'SENIOR-S05',
+    kicker: 'BRIEFING S05 · WORKER POOLS',
+    heading: 'S05 · Concurrencia acotada, backpressure y ctx.Done()',
+    ctaLabel: 'Probar Simulador Worker Pool',
+    ctaHref: '#/senior/S05',
+    scenes: [
+      {
+        chapter: '01 · Bloqueo',
+        title: 'Goroutines ilimitadas y envíos sin receptor cuelgan el shutdown',
+        durationSec: 11,
+        mascot: 'debug',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Caso S05: concurrencia de producción. Nuestro worker pool lanza goroutines sin control durante picos de tráfico y un envío bloqueado congela el shutdown del servidor. ¿Cómo lo domamos?',
+        visual: {
+          kind: 'architecture',
+          mode: 'incident',
+          nodes: [
+            { label: 'Productor', sub: 'go process(req) infinito', state: 'hot' },
+            { label: 'Canal unbuffered', sub: 'Send bloqueado en cierre', state: 'hot' },
+            { label: 'Shutdown', sub: 'Timeout / Goroutine leak', state: 'hot' },
+          ],
+          metricLabel: 'Salud del servicio',
+          metricBefore: 'Fugas de goroutines',
+          metricAfter: 'Pool acotado y cancelable',
+        },
+      },
+      {
+        chapter: '02 · Backpressure',
+        title: 'Cola acotada + select con <-ctx.Done() al enviar trabajos',
+        durationSec: 12,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Acota siempre el número de workers y la capacidad de la cola, propagando context.Context con select sobre <-ctx.Done() para cancelar envíos al instante y aplicar contrapresión al llenar la cola.',
+        visual: {
+          kind: 'lanes',
+          mode: 'ordered',
+          statusBadge: 'BOUNDED WORKER POOL · CTX.DONE()',
+          laneA: {
+            name: 'Productor + Context',
+            steps: ['select { case jobs <- j:', 'case <-ctx.Done(): return }', 'close(jobs) único dueño'],
+          },
+          laneB: {
+            name: 'N Workers Fijos',
+            steps: ['for job := range jobs', 'Propaga 1er error', 'wg.Wait() drenado limpio'],
+          },
+        },
+      },
+      {
+        chapter: '03 · Cierre Limpio',
+        title: 'Validar cero workers, saturación y cancelación bajo race',
+        durationSec: 11,
+        mascot: 'senior',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Solo el productor propietario cierra el canal de trabajos y el coordinador espera con WaitGroup antes de retornar. Prueba saturación, cero workers y cancelaciones con go test -race.',
+        visual: {
+          kind: 'terminal',
+          title: 's05-worker-pool · race & saturation',
+          lines: [
+            { prompt: '$', text: 'go test -race ./s05-worker-pool', tone: 'cmd' },
+            { text: 'ok   cancel during full queue -> instant abort', tone: 'ok' },
+            { text: 'ok   WaitGroup drained -> 0 leaked goroutines', tone: 'ok' },
+            { text: 'PASS · 0 data races · backpressure determinista', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  S06: attachAudio({
+    id: 'SENIOR-S06',
+    kicker: 'BRIEFING S06 · MEMORY MODEL',
+    heading: 'S06 · Carreras lógicas más allá del Race Detector',
+    ctaLabel: 'Probar Simulador Race abajo',
+    ctaHref: '#/senior/S06',
+    scenes: [
+      {
+        chapter: '01 · Espejismo',
+        title: 'go test -race en verde, pero el balance pierde dinero en carga',
+        durationSec: 12,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Caso S06: Memory Model y atómicos. Ejecuté go test -race y salió totalmente limpio, pero mi balance financiero sigue descuadrando bajo carga concurrente. ¿Cómo puede existir una carrera sin aviso?',
+        visual: {
+          kind: 'lanes',
+          mode: 'deadlock',
+          statusBadge: 'CHECK-THEN-ACT RACE (SIN DATA RACE)',
+          laneA: {
+            name: 'Goroutine A',
+            steps: ['v := atomic.Load() -> 100', '(pausa scheduler)', 'atomic.Add(-80) -> OK'],
+          },
+          laneB: {
+            name: 'Goroutine B',
+            steps: ['v := atomic.Load() -> 100', 'Ambas vieron 100!', 'atomic.Add(-80) -> -60 ⚠'],
+          },
+        },
+      },
+      {
+        chapter: '02 · Atomicidad Lógica',
+        title: 'Múltiples pasos atómicos no forman una transacción atómica',
+        durationSec: 13,
+        mascot: 'debug',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'El detector detecta accesos físicos inseguros, pero no carreras lógicas de negocio. Si lees un saldo atómico y luego restas en otra operación atómica separada, otro hilo puede colarse entre ambas líneas.',
+        visual: {
+          kind: 'code-diff',
+          file: 's06-atomic/ledger.go',
+          before: [
+            'if bal.Load() >= amount { bal.Add(-amount) } // Race lógica',
+          ],
+          after: [
+            'l.mu.Lock(); defer l.mu.Unlock()',
+            'if l.balance >= amount { l.balance -= amount }',
+          ],
+          callout: 'Ausencia de data race != ausencia de race condition de negocio.',
+        },
+      },
+      {
+        chapter: '03 · Herramienta Exacta',
+        title: 'Cuándo usar sync/atomic vs sync.Mutex o actor único',
+        durationSec: 12,
+        mascot: 'senior',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Usa sync/atomic solo en contadores simples e independientes; cuando una invariante abarca varias comprobaciones coordinadas, protege la transacción completa con sync.Mutex o propiedad exclusiva.',
+        visual: {
+          kind: 'terminal',
+          title: 's06-atomic · invariant test',
+          lines: [
+            { prompt: '$', text: 'go test -race ./s06-atomic', tone: 'cmd' },
+            { text: '200 goroutines competing for 100 balance...', tone: 'muted' },
+            { text: 'ok   Mutex transaction -> final balance >= 0', tone: 'ok' },
+            { text: 'PASS · Invariante financiera protegida', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  S07: attachAudio({
+    id: 'SENIOR-S07',
+    kicker: 'BRIEFING S07 · MEMORIA Y GC',
+    heading: 'S07 · Retención oculta de backing array en slices y Heap',
+    ctaLabel: 'Probar Simulador Memoria abajo',
+    ctaHref: '#/senior/S07',
+    scenes: [
+      {
+        chapter: '01 · Fuga Oculta',
+        title: 'Por qué 100 bytes retienen 10 MB sin liberar memoria al GC',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Caso S07: runtime, memoria y recolector de basura. Solo guardamos cien bytes de cabecera de cada archivo recibido, pero la memoria del servicio sube hasta provocar OOM en producción. ¿Por qué?',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'problem',
+          stackLabel: 'SUB-SLICE SIN COPY',
+          stackItems: [
+            { name: 'head := buf[:100]', value: 'len:100 · cap:10MB', state: 'moved' },
+          ],
+          heapLabel: 'BACKING ARRAY EN HEAP',
+          heapItems: [
+            {
+              addr: '0x44f0',
+              data: '[10,485,760 bytes]',
+              note: 'GC BLOQUEADO: head[:100] retiene vivos los 10 MB completos ⚠',
+              alert: true,
+            },
+          ],
+        },
+      },
+      {
+        chapter: '02 · Copia Defensiva',
+        title: 'Aislar el slice pequeño con copy() libera el bloque gigante',
+        durationSec: 12,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'En Go, un sub-slice sigue apuntando al array subyacente completo de diez megabytes. Mientras viva esa pequeña referencia de cien bytes, el recolector de basura nunca puede liberar el bloque gigante en el Heap.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'SLICE AISLADO',
+          stackItems: [
+            { name: 'out := make([]byte,100)', value: 'len:100 · cap:100', state: 'borrow' },
+          ],
+          heapLabel: 'HEAP DESACOPLADO',
+          heapItems: [
+            {
+              addr: '0x8b10',
+              data: 'copy(out, buf[:100])',
+              note: 'Los 10 MB originales pierden referencias y se liberan en el GC ✓',
+              alert: false,
+            },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Evidencia Real',
+        title: 'Medir escape analysis y validar el trade-off con pprof',
+        durationSec: 11,
+        mascot: 'debug',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Si el fragmento vivirá minutos en memoria, crea un slice exacto y usa copy() para cortar la referencia al bloque grande, validando con análisis de escape y perfiles reales de Heap.',
+        visual: {
+          kind: 'terminal',
+          title: 's07-slice-retention · heap check',
+          lines: [
+            { prompt: '$', text: 'go test -race ./s07-slice-retention', tone: 'cmd' },
+            { text: 'Before: backing Retained = 10,000,000 B (OOM)', tone: 'warn' },
+            { text: 'After : copy() Retained  = 100 B (99.99% freed)', tone: 'ok' },
+            { text: 'PASS · Igualdad exacta y cap(out) == 100', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  S08: attachAudio({
+    id: 'SENIOR-S08',
+    kicker: 'BRIEFING S08 · BENCHMARKS',
+    heading: 'S08 · Ingeniería de rendimiento con pprof y -benchmem',
+    ctaLabel: 'Abrir Decision Lab (G1)',
+    ctaHref: '#/senior/S08/decision-lab',
+    scenes: [
+      {
+        chapter: '01 · Intuición Falsa',
+        title: 'Por qué no aprobar micro-optimizaciones sin evidencia reproducible',
+        durationSec: 12,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Caso S08: ingeniería de rendimiento. Un compañero propuso reescribir medio módulo asegurando que reduce diez veces las asignaciones de memoria. ¿Lo aprobamos directamente en el Pull Request?',
+        visual: {
+          kind: 'architecture',
+          mode: 'incident',
+          nodes: [
+            { label: 'PR Conjetura', sub: 'Sin pprof ni baseline', state: 'hot' },
+            { label: 'Complejidad +3x', sub: 'Código frágil e ilegible', state: 'hot' },
+            { label: 'Dead Code Elim', sub: 'Benchmark optimizado falso', state: 'hot' },
+          ],
+          metricLabel: 'Riesgo de optimizar a ciegas',
+          metricBefore: 'Sin datos reales',
+          metricAfter: 'Complejidad sin ganancia',
+        },
+      },
+      {
+        chapter: '02 · Medir Primero',
+        title: 'Preasignar con strings.Builder.Grow() y misma semántica',
+        durationSec: 12,
+        mascot: 'reading',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Jamás optimices a ciegas sin perfilar ni comparar la misma semántica con datos representativos. Preasignar capacidad o usar strings.Builder con Grow solo vale el coste si lo confirman las métricas reales.',
+        visual: {
+          kind: 'code-diff',
+          file: 's08-performance/join_bench_test.go',
+          before: [
+            'out += item + "," // O(N²) reallocations por iteración',
+          ],
+          after: [
+            'var b strings.Builder; b.Grow(totalLen)',
+            'for _, it := range items { b.WriteString(it) }',
+          ],
+          callout: 'Comparar siempre entrada idéntica, resultado idéntico y evitar DCE.',
+        },
+      },
+      {
+        chapter: '03 · Lectura -benchmem',
+        title: 'Interpretar ns/op, B/op y allocs/op en múltiples muestras',
+        durationSec: 12,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Ejecuta go test -run ^$ -bench . -benchmem en condiciones reproducibles, revisa nanosegundos, B/op y allocs/op en varias muestras, y conserva tests de regresión para proteger el comportamiento.',
+        visual: {
+          kind: 'terminal',
+          title: 's08-performance · -benchmem',
+          lines: [
+            { prompt: '$', text: 'go test -run ^$ -bench . -benchmem ./s08-performance', tone: 'cmd' },
+            { text: 'BenchmarkConcatNaive-8     4210 ns/op   5312 B/op   18 allocs/op', tone: 'warn' },
+            { text: 'BenchmarkBuilderGrow-8      248 ns/op    128 B/op    1 allocs/op', tone: 'ok' },
+            { text: 'PASS · 17x throughput · 18x menos presión GC', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
 };
 
 export function getSeniorCinemaDeck(moduleId: string): CinemaDeck | undefined {

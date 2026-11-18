@@ -45,15 +45,28 @@ def clean_for_speech(text: str) -> str:
         ("errors.Is", "errors punto is"),
         ("errors.New", "errors punto new"),
         ("strconv.Atoi", "string conv punto a to i"),
+        ("strings.Builder", "strings punto Builder"),
         ("ctx.Done()", "context punto done"),
         ("<-ctx.Done()", "el canal context punto done"),
         ("context.Context", "context punto Context"),
         ("sync.Mutex", "sincronización con mutex"),
         ("sync/atomic", "paquete sync barra atomic"),
         ("net/http", "net barra http"),
+        ("go test -run ^$ -bench . -benchmem", "go test guion bench con métricas de memoria"),
         ("go test -race ./...", "go test guion race en todos los paquetes"),
         ("go test -race", "go test guion race"),
         ("go test", "go test"),
+        ("happens-before", "happens before"),
+        ("table-driven", "basadas en tablas"),
+        ("backpressure", "contrapresión"),
+        ("sub-slice", "sub slice"),
+        ("backing array", "array subyacente"),
+        ("escape analysis", "análisis de escape"),
+        ("GC", "recolector de basura"),
+        ("ns/op", "nanosegundos por operación"),
+        ("B/op", "bytes por operación"),
+        ("allocs/op", "asignaciones por operación"),
+        ("copy()", "copy"),
         ("main.go", "main punto go"),
         ("go.mod", "go punto mod"),
         ("go.sum", "go punto sum"),
@@ -434,9 +447,132 @@ def build_batch_1_scripts() -> dict[str, tuple[str, list[dict]]]:
     return decks
 
 
+def build_batch_2_scripts() -> dict[str, tuple[str, list[dict]]]:
+    """Second 5 studio capsules: SENIOR-S04, SENIOR-S05, SENIOR-S06, SENIOR-S07, SENIOR-S08."""
+    decks: dict[str, tuple[str, list[dict]]] = {}
+
+    # 6. SENIOR-S04 (Modelado del dominio e invariantes de estados)
+    decks["SENIOR-S04"] = (
+        "senior-s04.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S04: modelado del dominio. El controlador HTTP cambia el estado de un pedido directamente y terminan marcando órdenes como canceladas después de haberse pagado. ¿Cómo protegemos esas reglas?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Sacamos la máquina de estados del handler y la encerramos en métodos atómicos del agregado Order. Si un pedido ya está en Paid o Cancelled, cualquier transición inválida debe rechazarse antes de tocar datos.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Protege el límite de consistencia probando transiciones válidas, inválidas y repetidas en go test -race, documentando cada precondición en tu documento de arquitectura.",
+            },
+        ],
+    )
+
+    # 7. SENIOR-S05 (Worker pools cancelables y backpressure)
+    decks["SENIOR-S05"] = (
+        "senior-s05.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S05: concurrencia de producción. Nuestro worker pool lanza goroutines sin control durante picos de tráfico y un envío bloqueado congela el shutdown del servidor. ¿Cómo lo domamos?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Acota siempre el número de workers y la capacidad de la cola, propagando context.Context con select sobre <-ctx.Done() para cancelar envíos al instante y aplicar contrapresión al llenar la cola.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Solo el productor propietario cierra el canal de trabajos y el coordinador espera con WaitGroup antes de retornar. Prueba saturación, cero workers y cancelaciones con go test -race.",
+            },
+        ],
+    )
+
+    # 8. SENIOR-S06 (Memory Model, happens-before y carreras lógicas)
+    decks["SENIOR-S06"] = (
+        "senior-s06.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S06: Memory Model y atómicos. Ejecuté go test -race y salió totalmente limpio, pero mi balance financiero sigue descuadrando bajo carga concurrente. ¿Cómo puede existir una carrera sin aviso?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "El detector detecta accesos físicos inseguros, pero no carreras lógicas de negocio. Si lees un saldo atómico y luego restas en otra operación atómica separada, otro hilo puede colarse entre ambas líneas.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Usa sync/atomic solo en contadores simples e independientes; cuando una invariante abarca varias comprobaciones coordinadas, protege la transacción completa con sync.Mutex o propiedad exclusiva.",
+            },
+        ],
+    )
+
+    # 9. SENIOR-S07 (Runtime, retención de backing array y escape analysis)
+    decks["SENIOR-S07"] = (
+        "senior-s07.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S07: runtime, memoria y recolector de basura. Solo guardamos cien bytes de cabecera de cada archivo recibido, pero la memoria del servicio sube hasta provocar OOM en producción. ¿Por qué?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "En Go, un sub-slice sigue apuntando al array subyacente completo de diez megabytes. Mientras viva esa pequeña referencia de cien bytes, el recolector de basura nunca puede liberar el bloque gigante en el Heap.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Si el fragmento vivirá minutos en memoria, crea un slice exacto y usa copy() para cortar la referencia al bloque grande, validando con análisis de escape y perfiles reales de Heap.",
+            },
+        ],
+    )
+
+    # 10. SENIOR-S08 (Ingeniería de rendimiento, profiling y benchmarks)
+    decks["SENIOR-S08"] = (
+        "senior-s08.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S08: ingeniería de rendimiento. Un compañero propuso reescribir medio módulo asegurando que reduce diez veces las asignaciones de memoria. ¿Lo aprobamos directamente en el Pull Request?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Jamás optimices a ciegas sin perfilar ni comparar la misma semántica con datos representativos. Preasignar capacidad o usar strings.Builder con Grow solo vale el coste si lo confirman las métricas reales.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Ejecuta go test -run ^$ -bench . -benchmem en condiciones reproducibles, revisa nanosegundos, B/op y allocs/op en varias muestras, y conserva tests de regresión para proteger el comportamiento.",
+            },
+        ],
+    )
+
+    return decks
+
+
 async def main() -> None:
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch2"
     AUDIO_OUT_DIR.mkdir(parents=True, exist_ok=True)
-    decks = build_batch_1_scripts()
+    if mode == "--all":
+        decks = {**build_batch_1_scripts(), **build_batch_2_scripts()}
+    elif mode == "--batch1":
+        decks = build_batch_1_scripts()
+    else:
+        decks = build_batch_2_scripts()
     print(f"🎙️ Generando {len(decks)} pistas de audio neuronal HD + mastering de estudio con {FFMPEG}...")
     sem = asyncio.Semaphore(5)
 

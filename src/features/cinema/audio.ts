@@ -14,13 +14,19 @@ export function cleanForSpeech(text: string): string {
     .replace(/fmt\.Errorf/g, 'efe eme te punto error efe')
     .replace(/errors\.Is/g, 'errors punto is')
     .replace(/strconv\.Atoi/g, 'string conv punto a to i')
+    .replace(/strings\.Builder/g, 'strings punto Builder')
     .replace(/<-ctx\.Done\(\)/g, 'el canal context punto done')
     .replace(/go test -race \.\/\.\.\./g, 'go test guion race en todos los paquetes')
     .replace(/go test -race/g, 'go test guion race')
+    .replace(/go test -run \^\$ -bench \. -benchmem/g, 'go test guion bench con memoria')
     .replace(/"%w"/g, 'por ciento doble ve')
     .replace(/%w/g, 'por ciento doble ve')
     .replace(/P99/g, 'pe noventa y nueve')
     .replace(/TTL/g, 'té té ele')
+    .replace(/ns\/op/g, 'nanosegundos por operación')
+    .replace(/B\/op/g, 'bytes por operación')
+    .replace(/allocs\/op/g, 'asignaciones por operación')
+    .replace(/sync\/atomic/g, 'sync barra atomic')
     .replace(/sync\.Mutex/g, 'sync punto mutex');
 }
 

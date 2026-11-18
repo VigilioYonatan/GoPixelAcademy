@@ -7,10 +7,21 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const manifestPath = resolve(root, 'src/features/cinema/audio-manifest.json');
 
-test('gopher cinema batch 1 audio manifest has 5 valid pre-mastered studio tracks', () => {
+test('gopher cinema audio manifest has 10 valid pre-mastered studio tracks (Batch 1 + Batch 2)', () => {
   assert.ok(existsSync(manifestPath), 'audio-manifest.json must exist');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-  const expectedIds = ['HOME-INTRO', 'SENIOR-OVERVIEW', 'SENIOR-S01', 'SENIOR-S02', 'SENIOR-S03'];
+  const expectedIds = [
+    'HOME-INTRO',
+    'SENIOR-OVERVIEW',
+    'SENIOR-S01',
+    'SENIOR-S02',
+    'SENIOR-S03',
+    'SENIOR-S04',
+    'SENIOR-S05',
+    'SENIOR-S06',
+    'SENIOR-S07',
+    'SENIOR-S08',
+  ];
   for (const id of expectedIds) {
     const entry = manifest[id];
     assert.ok(entry, `Missing audio manifest entry for ${id}`);
