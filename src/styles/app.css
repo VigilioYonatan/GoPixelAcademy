@@ -1086,3 +1086,257 @@
   color: #475569;
 }
 
+/* ==========================================================================
+   IDE TYPOGRAPHY & GO SYNTAX HIGHLIGHTING SYSTEM
+   Self-hosted JetBrains Mono + Tokyo Night / GitHub Dark Syntax Tokens + Gutter
+   ========================================================================== */
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.mono,
+code,
+pre,
+.choice,
+.order-item code,
+.hint-box code,
+.mini-code,
+.code-float code {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+  font-feature-settings: "calt" 1, "zero" 1;
+}
+
+/* IDE Window Dots & Header Tab */
+.ide-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ide-dots i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.ide-dots .dot-r { background: #ff5f56; }
+.ide-dots .dot-y { background: #ffbd2e; }
+.ide-dots .dot-g { background: #27c93f; }
+
+.go-ide-header {
+  background: #0c1422;
+  border-bottom: 1px solid #1a2a40;
+  padding: 12px 18px;
+}
+:root[data-theme='light'] .go-ide-header {
+  background: #f1f6fb;
+  border-bottom-color: #d5e2ee;
+}
+.ide-tab-file {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: rgba(84, 218, 242, 0.1);
+  border: 1px solid rgba(84, 218, 242, 0.22);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #e6edf3;
+}
+:root[data-theme='light'] .ide-tab-file {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+/* Interactive Go Code Editor (Synchronized Overlay + Line Gutter) */
+.go-ide-body {
+  --ide-font-size: 14.5px;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  background: #09101d;
+  min-height: 240px;
+  position: relative;
+}
+.go-ide-body.font-sm { --ide-font-size: 13px; }
+.go-ide-body.font-md { --ide-font-size: 14.5px; }
+.go-ide-body.font-lg { --ide-font-size: 16.5px; }
+
+:root[data-theme='light'] .go-ide-body {
+  background: #0d1626;
+}
+
+.go-ide-gutter {
+  padding: 18px 10px 18px 0;
+  background: #070d18;
+  border-right: 1px solid #152338;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  user-select: none;
+  overflow: hidden;
+  font-family: "JetBrains Mono", ui-monospace, monospace !important;
+  font-size: var(--ide-font-size);
+  line-height: 1.72;
+  color: #485e78;
+}
+.go-ide-gutter span {
+  display: block;
+  height: calc(var(--ide-font-size) * 1.72);
+}
+
+.go-ide-stage {
+  position: relative;
+  min-height: 240px;
+  overflow: hidden;
+}
+
+.go-ide-highlight,
+textarea.code-editor.go-ide-textarea {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace !important;
+  font-size: var(--ide-font-size) !important;
+  font-weight: 500 !important;
+  font-variant-ligatures: none !important;
+  font-feature-settings: "liga" 0, "calt" 0 !important;
+  letter-spacing: 0px !important;
+  line-height: 1.72 !important;
+  tab-size: 4 !important;
+  padding: 18px 20px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  white-space: pre !important;
+  word-wrap: normal !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 240px !important;
+}
+
+.go-ide-highlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: transparent;
+  color: #e6edf3;
+  z-index: 1;
+}
+.go-ide-highlight code {
+  font: inherit !important;
+  letter-spacing: inherit !important;
+  font-variant-ligatures: none !important;
+  font-feature-settings: "liga" 0, "calt" 0 !important;
+}
+.go-ide-highlight span {
+  font-weight: 500 !important;
+  font-style: normal !important;
+}
+
+textarea.code-editor.go-ide-textarea {
+  position: relative;
+  z-index: 2;
+  display: block;
+  resize: vertical;
+  background: transparent !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  caret-color: #54daf2 !important;
+  overflow: auto;
+}
+textarea.code-editor.go-ide-textarea::selection {
+  background: rgba(84, 218, 242, 0.26);
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Read-only Go Code Blocks (Minigames, Senior Code Review, Guides, Frameworks) */
+.mini-code {
+  background: #09101d;
+  color: #e6edf3;
+  border: 1px solid #192b42;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 13.5px;
+  line-height: 1.68;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+.go-code-block.with-lines {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px 20px 16px 14px;
+  white-space: pre;
+}
+.go-line-gutter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-right: 12px;
+  border-right: 1px solid #17273d;
+  color: #485e78;
+  user-select: none;
+  font-size: 12.5px;
+  line-height: 1.68;
+}
+.go-code-content {
+  display: block;
+  overflow-x: auto;
+  white-space: pre;
+  color: #e6edf3;
+  line-height: 1.68;
+}
+
+/* Go Syntax Highlighting Palette (Tokyo Night / GitHub Dark High-Contrast) */
+.tok-keyword {
+  color: #ff7b72;
+  font-weight: 600;
+}
+.tok-func {
+  color: #d2a8ff;
+}
+.tok-pkg {
+  color: #79c0ff;
+}
+.tok-type {
+  color: #56d4dd;
+}
+.tok-string {
+  color: #7ee787;
+}
+.tok-number {
+  color: #ffa657;
+}
+.tok-operator {
+  color: #ff7b72;
+}
+.tok-punct {
+  color: #8b9eb7;
+}
+.tok-comment {
+  color: #6e849d;
+  font-style: italic;
+}
+.tok-blank {
+  color: #ffd166;
+  background: rgba(255, 209, 102, 0.16);
+  border-bottom: 2px dashed #ffb703;
+  border-radius: 3px;
+}
+
+.code-float {
+  background: #09101df2;
+  border-color: #1f3652;
+  color: #e6edf3;
+}
+.code-float code {
+  white-space: pre;
+  color: #e6edf3;
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+

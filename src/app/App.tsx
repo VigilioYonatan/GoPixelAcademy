@@ -35,6 +35,7 @@ import fr from '../i18n/fr.json';
 import { goExamples, lessonGuides } from '../data/learning-exercises';
 import { frameworkCurriculum } from '../data/frameworks-curriculum';
 import { gameBank } from '../data/learning-games';
+import { GoCodeBlock, GoCodeEditor, renderTokens } from '../components/GoCode';
 import {
   PixelHomeIcon,
   PixelBookIcon,
@@ -210,7 +211,7 @@ function Home({t,prefs}:{t:(k:string)=>string;prefs:Prefs}) {
  return <><div class="hero">
   <div class="hero-stars" aria-hidden="true">✦ &nbsp; · &nbsp; ✧ &nbsp; · &nbsp; ✦</div>
   <div class="hero-copy"><div class="eyebrow"><span class="dot"/>{t('heroEyebrow')}</div><h1>Go<span>Pixel</span><br/>Academy</h1><p class="hero-title">{t('heroTitle')}</p><p class="hero-subtitle">{t('heroSubtitle')}</p><div class="hero-ctas"><Button onClick={()=>routeTo('lesson/B01')}><Icon name="play" size={21}/>{t('start')}</Button><Button kind="outline" onClick={()=>routeTo('learn')}>{t('explore')} →</Button></div><div class="hero-metrics"><span><b>54</b> Go</span><span><b>18</b> Senior</span><span><b>8</b> Frameworks</span><span><b>6</b> 🌐</span></div></div>
-  <div class="hero-art"><div class="hero-orbit"/><Gopher name="coding" className="hero-gopher"/><div class="code-float"><span>● ● ● &nbsp; main.go</span><code>func main() {'{'}<br/> &nbsp;fmt.Println("Go!")<br/>{'}'}</code></div></div>
+  <div class="hero-art"><div class="hero-orbit"/><Gopher name="coding" className="hero-gopher"/><div class="code-float"><span class="ide-dots"><i class="dot-r"/><i class="dot-y"/><i class="dot-g"/> &nbsp; main.go</span><code>{renderTokens('func main() {\n  fmt.Println("Go!")\n}', 'go')}</code></div></div>
   </div><section class="section"><div class="section-heading"><div><span class="eyebrow small">LEARNING MAP</span><h2>{t('featured')}</h2></div><a href="#/learn" class="text-link">{t('showAll')} →</a></div><div class="track-grid">{tracks.map(track=><TrackCard key={track} track={track} t={t} prefs={prefs}/>)}</div></section><section class="feature-banner"><div><span class="senior-kicker">SENIOR MODE · 18 LABS · 90 GATES</span><h2>{prefs.locale==='es'?'Piensa más allá de la sintaxis.':prefs.locale==='en'?'Think beyond syntax.':prefs.locale==='ja'?'構文の先にある設計力を。':prefs.locale==='zh'?'超越语法，直面生产架构。':prefs.locale==='pt'?'Pense além da sintaxe.':'Pensez au-delà de la syntaxe.'}</h2><p>{t('briefHint')}</p><Button kind="senior" onClick={()=>routeTo('senior')}><Icon name="crown" size={18}/>{t('senior')}</Button></div><Gopher name="senior"/></section></>;
 }
 function TrackCard({track,t,prefs}:{track:RouteTrack;t:(k:string)=>string;prefs:Prefs}) {
@@ -227,7 +228,7 @@ function Lesson({t,locale,id,prefs,updateDraft,mark}:{t:(k:string)=>string;local
  const [localCode,setLocalCode]=useState<string>(prefs.drafts[id]??spec?.code??'');
  useEffect(()=>{setLocalCode(prefs.drafts[id]??goExamples[id]?.code??'');setFeedback(null);setShowHint(false)},[id]);
  if(!m)return <div class="content-page"><PageHeading eyebrow="404" title="Module not found"/><Button onClick={()=>routeTo('learn')}>{t('back')}</Button></div>;
- return <div class="content-page lesson-page"><div class="breadcrumbs"><a href="#/learn">{t('learn')}</a><span>/</span><a href={`#/learn/${m.track}`}>{t(m.track)}</a><span>/</span><b>{m.id}</b></div><PageHeading eyebrow={`${t('lesson')} ${m.id}`} title={m.title[locale]} subtitle={m.summary[locale]}/><div class="lesson-layout"><div class="lesson-main"><Card className="lesson-intro"><div class="lesson-intro-head"><div><h2>{t('objectives')}</h2><p>{m.summary[locale]}</p></div><div class="lesson-intro-art"><Gopher name={spec?'reading':'architecture'}/></div></div>{guide?.concepts[locale]&&<div class="concept-grid">{guide.concepts[locale].map(c=><div class="concept-item" key={c.term}><code>{c.term}</code><p>{c.desc}</p></div>)}</div>}{!spec&&<p class="notice">{t('contentPlan')}</p>}</Card>{guide?.mission[locale]&&<div class="lesson-mission"><div class="lesson-mission-title"><Icon name="check" size={18}/><span>{locale==='es'?'🎯 Tu Misión':locale==='en'?'🎯 Your Mission':locale==='ja'?'🎯 ミッション':locale==='zh'?'🎯 当前任务':locale==='pt'?'🎯 Sua Missão':'🎯 Votre Mission'}</span></div><p>{guide.mission[locale]}</p></div>}<Card className="editor-card"><div class="panel-title"><span><Icon name="terminal" size={18}/> main.go</span><span class="tag info">{spec?t('preview'):t('planned')}</span></div>{spec?<><textarea aria-label={t('code')} spellcheck={false} class={`code-editor font-${prefs.fontSize || "md"}`} value={localCode} onInput={e=>{const v=(e.currentTarget as HTMLTextAreaElement).value;setLocalCode(v);updateDraft(id,v);setFeedback(null)}} /><div class="editor-actions"><Button onClick={()=>{const pass=spec.test(localCode);setFeedback(pass?'correct':'incorrect');if(pass)mark(id)}}><Icon name="check" size={18}/>{t('validate')}</Button><Button kind="outline" onClick={()=>{setLocalCode(spec.code);updateDraft(id,spec.code);setFeedback(null)}}>{t('reset')}</Button><Button kind="quiet" onClick={()=>setShowHint(!showHint)}>{t('hint')}</Button></div>{showHint&&<div class="hint-box"><Icon name="question" size={18}/><code>{spec.hint}</code></div>}{feedback&&<div class={`feedback ${feedback}`}>{feedback==='correct'?'✓ ':'○ '}{t(feedback)}</div>}<p class="small-disclaimer">{t('runUnavailable')}</p></>:<div class="empty-editor"><Icon name="book" size={34}/>{t('contentPlan')}</div>}</Card></div><aside class="lesson-side"><Card className="side-panel"><h3>{locale==='es'?'Paso a paso':locale==='en'?'Step by Step':locale==='ja'?'学習ステップ':locale==='zh'?'学习步骤':locale==='pt'?'Passo a Passo':'Étape par étape'}</h3><ul class="steps-list">{(guide?.steps[locale]||['01 · Lee la lección','02 · Completa el código','03 · Comprueba tu solución']).map((s,idx)=><li key={idx}>{s}</li>)}</ul></Card><Card className="side-gopher"><Gopher name="idea"/><p>{locale==='es'?'Escribe en el editor y pulsa "Comprobar solución" para ganar XP.':locale==='en'?'Type in the editor and click "Check solution" to earn XP.':locale==='ja'?'エディタに入力し「解答を確認」をクリックしてXPを獲得。':locale==='zh'?'在编辑器中输入并点击“验证代码”以获得经验值。':locale==='pt'?'Digite no editor e clique em "Validar solução" para ganhar XP.':'Tapez dans l\'éditeur et cliquez sur "Vérifier la solution" pour gagner des XP.'}</p></Card></aside></div></div>;
+ return <div class="content-page lesson-page"><div class="breadcrumbs"><a href="#/learn">{t('learn')}</a><span>/</span><a href={`#/learn/${m.track}`}>{t(m.track)}</a><span>/</span><b>{m.id}</b></div><PageHeading eyebrow={`${t('lesson')} ${m.id}`} title={m.title[locale]} subtitle={m.summary[locale]}/><div class="lesson-layout"><div class="lesson-main"><Card className="lesson-intro"><div class="lesson-intro-head"><div><h2>{t('objectives')}</h2><p>{m.summary[locale]}</p></div><div class="lesson-intro-art"><Gopher name={spec?'reading':'architecture'}/></div></div>{guide?.concepts[locale]&&<div class="concept-grid">{guide.concepts[locale].map(c=><div class="concept-item" key={c.term}><code>{c.term}</code><p>{c.desc}</p></div>)}</div>}{!spec&&<p class="notice">{t('contentPlan')}</p>}</Card>{guide?.mission[locale]&&<div class="lesson-mission"><div class="lesson-mission-title"><Icon name="check" size={18}/><span>{locale==='es'?'🎯 Tu Misión':locale==='en'?'🎯 Your Mission':locale==='ja'?'🎯 ミッション':locale==='zh'?'🎯 当前任务':locale==='pt'?'🎯 Sua Missão':'🎯 Votre Mission'}</span></div><p>{guide.mission[locale]}</p></div>}<Card className="editor-card"><div class="panel-title go-ide-header"><span><span class="ide-dots" aria-hidden="true"><i class="dot-r"/><i class="dot-y"/><i class="dot-g"/></span><span class="ide-tab-file">main.go</span></span><span class="tag info">{spec?`Go 1.23 · ${t('preview')}`:t('planned')}</span></div>{spec?<><GoCodeEditor ariaLabel={t('code')} fontSize={(prefs.fontSize||'md') as 'sm'|'md'|'lg'} value={localCode} onChange={v=>{setLocalCode(v);updateDraft(id,v);setFeedback(null)}}/><div class="editor-actions"><Button onClick={()=>{const pass=spec.test(localCode);setFeedback(pass?'correct':'incorrect');if(pass)mark(id)}}><Icon name="check" size={18}/>{t('validate')}</Button><Button kind="outline" onClick={()=>{setLocalCode(spec.code);updateDraft(id,spec.code);setFeedback(null)}}>{t('reset')}</Button><Button kind="quiet" onClick={()=>setShowHint(!showHint)}>{t('hint')}</Button></div>{showHint&&<div class="hint-box"><Icon name="question" size={18}/><code>{renderTokens(spec.hint,'go')}</code></div>}{feedback&&<div class={`feedback ${feedback}`}>{feedback==='correct'?'✓ ':'○ '}{t(feedback)}</div>}<p class="small-disclaimer">{t('runUnavailable')}</p></>:<div class="empty-editor"><Icon name="book" size={34}/>{t('contentPlan')}</div>}</Card></div><aside class="lesson-side"><Card className="side-panel"><h3>{locale==='es'?'Paso a paso':locale==='en'?'Step by Step':locale==='ja'?'学習ステップ':locale==='zh'?'学习步骤':locale==='pt'?'Passo a Passo':'Étape par étape'}</h3><ul class="steps-list">{(guide?.steps[locale]||['01 · Lee la lección','02 · Completa el código','03 · Comprueba tu solución']).map((s,idx)=><li key={idx}>{s}</li>)}</ul></Card><Card className="side-gopher"><Gopher name="idea"/><p>{locale==='es'?'Escribe en el editor y pulsa "Comprobar solución" para ganar XP.':locale==='en'?'Type in the editor and click "Check solution" to earn XP.':locale==='ja'?'エディタに入力し「解答を確認」をクリックしてXPを獲得。':locale==='zh'?'在编辑器中输入并点击“验证代码”以获得经验值。':locale==='pt'?'Digite no editor e clique em "Validar solução" para ganhar XP.':'Tapez dans l\'éditeur et cliquez sur "Vérifier la solution" pour gagner des XP.'}</p></Card></aside></div></div>;
 }
 
 const gameModes = [
@@ -456,7 +457,7 @@ function Games({
         {mode === 'complete' && (
           <>
             <h2>{curComplete.title[locale]}</h2>
-            <pre class="mini-code">{curComplete.snippet}</pre>
+            <GoCodeBlock code={curComplete.snippet} lang="go" showLineNumbers />
             <label>
               {t('answer')}
               <input
@@ -472,7 +473,7 @@ function Games({
         {mode === 'predict' && (
           <>
             <h2>{curPredict.title[locale]}</h2>
-            <pre class="mini-code">{curPredict.snippet}</pre>
+            <GoCodeBlock code={curPredict.snippet} lang="go" showLineNumbers />
             <div class="option-grid">
               {curPredict.options.map((x) => (
                 <button
@@ -491,7 +492,7 @@ function Games({
         {mode === 'bug' && (
           <>
             <h2>{curBug.question[locale]}</h2>
-            <pre class="mini-code">{curBug.snippet}</pre>
+            <GoCodeBlock code={curBug.snippet} lang="go" showLineNumbers />
             <div class="option-grid">
               {curBug.options.map((x) => (
                 <button
@@ -513,7 +514,7 @@ function Games({
             <div class="order-list">
               {items.map((x, i) => (
                 <div class="order-item" key={x}>
-                  <code>{x}</code>
+                  <code>{renderTokens(x, 'go')}</code>
                   <div>
                     <button
                       type="button"
@@ -792,7 +793,7 @@ type OrderNotifier interface {
 
 function Frameworks({t,locale,id}:{t:(k:string)=>string;locale:Locale;id?:string}) {
  const frameworks=modules.filter(m=>m.track==='frameworks');const m=frameworks.find(m=>m.id===id);
- if(m) return <div class="content-page"><div class="breadcrumbs"><a href="#/frameworks">{t('frameworks')}</a><span>/</span><b>{m.id}</b></div><PageHeading eyebrow={`FRAMEWORKS ACADEMY · ${m.id}`} title={m.title[locale]} subtitle={m.summary[locale]}/><div class="framework-detail"><Card><h2>{t('objectives')}</h2><div class="chip-line">{m.tools?.map(x=><span class="chip">{x}</span>)}</div><div class="notice">{t('frameworkHint')}</div><h3>{t('contentPlan')}</h3><pre class="mini-code">{frameworkSnippets[m.id] || `// ${m.title.en}\n// Go backend lab`}</pre></Card><Card><Gopher name="building"/><h3>{t('challenge')}</h3><p>{t('contentPlan')}</p><Button kind="outline" onClick={()=>routeTo('frameworks')}>{t('back')}</Button></Card></div></div>
+ if(m) return <div class="content-page"><div class="breadcrumbs"><a href="#/frameworks">{t('frameworks')}</a><span>/</span><b>{m.id}</b></div><PageHeading eyebrow={`FRAMEWORKS ACADEMY · ${m.id}`} title={m.title[locale]} subtitle={m.summary[locale]}/><div class="framework-detail"><Card><h2>{t('objectives')}</h2><div class="chip-line">{m.tools?.map(x=><span class="chip">{x}</span>)}</div><div class="notice">{t('frameworkHint')}</div><h3>{t('contentPlan')}</h3><GoCodeBlock code={frameworkSnippets[m.id] || `// ${m.title.en}\n// Go backend lab`} lang="go" showLineNumbers /></Card><Card><Gopher name="building"/><h3>{t('challenge')}</h3><p>{t('contentPlan')}</p><Button kind="outline" onClick={()=>routeTo('frameworks')}>{t('back')}</Button></Card></div></div>
  return (
   <div class="content-page">
     <PageHeading

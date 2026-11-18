@@ -1,6 +1,7 @@
 import nativeLabs from '../../content/senior/native-labs.json';
 import curriculum from '../../data/curriculum.json';
 import { evaluateReadiness } from './engine/readiness.mjs';
+import { GoCodeBlock } from '../../components/GoCode';
 
 type Locale = 'es' | 'en' | 'ja' | 'zh' | 'pt' | 'fr';
 
@@ -155,12 +156,10 @@ export function NativeLabCatalog({ locale, activeModule }: { locale: Locale; act
             {t.download} ↓
           </a>
         </div>
-        <pre class="mini-code" style={{ marginTop: '16px', marginBottom: 0 }}>
-{`cd labs-native
-go test ./...
-go test -race ./...
-go test -run '^$' -bench . ./s08-performance`}
-        </pre>
+        <GoCodeBlock
+          lang="sh"
+          code={`cd labs-native\ngo test ./...\ngo test -race ./...\ngo test -run '^$' -bench . ./s08-performance`}
+        />
       </div>
 
       <div class="senior-grid senior-grid-v2" style={{ marginTop: '24px' }}>

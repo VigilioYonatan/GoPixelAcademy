@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import guides from '../../content/senior/guides.json';
 import curriculum from '../../data/curriculum.json';
+import { GoCodeBlock } from '../../components/GoCode';
 
 type Locale = 'es' | 'en' | 'ja' | 'zh' | 'pt' | 'fr';
 
@@ -164,7 +165,7 @@ export function SeniorGuide({ moduleId, locale }: { moduleId: string; locale: Lo
               {copiedKey === 'cmd' ? copy.copied : copy.copyCode}
             </button>
           </div>
-          <pre class="mini-code"><code>{guide.command}</code></pre>
+          <GoCodeBlock code={guide.command} lang="sh" />
           <p class="small-disclaimer">{copy.disclaimer}</p>
           <a class="btn btn-senior-solid" href={`#/senior/${moduleId}/native`} style={{ width: '100%', marginTop: '12px' }}>
             {copy.practice} →
@@ -187,7 +188,7 @@ export function SeniorGuide({ moduleId, locale }: { moduleId: string; locale: Lo
             {copiedKey === 'src' ? copy.copied : copy.copyCode}
           </button>
         </summary>
-        <pre class="mini-code"><code>{guide.referenceSource}</code></pre>
+        <GoCodeBlock code={guide.referenceSource} lang="go" showLineNumbers />
       </details>
 
       <details class="card senior-guide-code">
@@ -205,7 +206,7 @@ export function SeniorGuide({ moduleId, locale }: { moduleId: string; locale: Lo
             {copiedKey === 'test' ? copy.copied : copy.copyCode}
           </button>
         </summary>
-        <pre class="mini-code"><code>{guide.referenceTest}</code></pre>
+        <GoCodeBlock code={guide.referenceTest} lang="go" showLineNumbers />
       </details>
     </main>
   );

@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import reviews from '../../content/senior/code-reviews.json';
 import curriculum from '../../data/curriculum.json';
 import { gradeCodeReview } from './engine/code-review.mjs';
+import { GoCodeBlock } from '../../components/GoCode';
 import type { ReviewRecord, ReviewGrade } from './engine/code-review.mjs';
 
 type Language='es'|'en'|'ja'|'zh'|'pt'|'fr';
@@ -37,7 +38,7 @@ export function CodeReviewLab({moduleId,locale,previous,save,reportOnly=false}:P
   <header class="page-heading"><div class="senior-hub-badges"><span class="senior-id-pill">{moduleId}</span><span class="senior-kind-pill">G5 · PEER REVIEW</span></div><h1 id="review-title">{module?.title[locale]??t.heading}</h1><p>{lab.title}</p></header>
   {t.languageNote&&<p class="notice" role="note">{t.languageNote}</p>}
   <div class="senior-lab-grid"><div class="senior-lab-main">
-   <section class="card"><h2>{t.code}</h2><pre class="mini-code review-code"><code>{lab.code}</code></pre><p class="small-disclaimer">{t.disclaimer}</p></section>
+   <section class="card"><h2>{t.code}</h2><GoCodeBlock code={lab.code} lang="go" className="review-code" showLineNumbers /><p class="small-disclaimer">{t.disclaimer}</p></section>
    <section class="card"><h2>{t.risks}</h2>
     {lab.questions.map((q,qi)=><fieldset key={qi} class="senior-question" disabled={reportOnly||!!evaluation}>
      <legend><b>{qi+1}. {q.prompt}</b></legend><div class="senior-options">{q.options.map((option,index)=><label key={index} class={`senior-option ${selected?.[qi]===index?'chosen':''}`}><input type="radio" name={`${moduleId}-review-${qi}`} checked={selected?.[qi]===index} onChange={()=>setAnswers(v=>v.map((a,i)=>i===qi?index:a))}/><span>{option}</span></label>)}</div>
