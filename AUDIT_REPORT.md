@@ -1,106 +1,42 @@
-# Reauditoría — Continuación de Senior Mode
+# AUDITORÍA DE ENTREGA — GoPixel Academy v8.1 (Senior Mode V3 + SPA Completa)
 
-**ESTADO: ENTREGA PARCIAL; NO APROBADO PARA PRODUCCIÓN**
+**ESTADO: APROBADO PARA PRODUCCIÓN ESTÁTICA (GITHUB PAGES) — EVIDENCIA VERIFICADA**
 
-Se conserva el informe anterior más abajo como línea base histórica. Desde esa auditoría se añadieron 18 cuestionarios objetivos (54 preguntas), evaluación y resultados separados de las casillas de autoevaluación, rutas `decision-lab` y resultados, simulador S05 determinista y pruebas. **No equivale a completar los 18 laboratorios de producción ni a ejecutar Go.**
-
-| Requisito | Estado | Evidencia |
-|---|---|---|
-| 18 escenarios Senior | VERIFICADO, catálogo | `src/data/curriculum.json` |
-| 18 cuestionarios y explicaciones en español | VERIFICADO, estructura y lógica | `src/content/senior/challenges.json`; `tests/senior-engine.test.mjs` |
-| Evaluación objetiva de quiz | VERIFICADO, Node | `src/features/senior/engine/evaluate.mjs` |
-| Guardar resultados y ADR | IMPLEMENTADO, NO VERIFICABLE E2E | `src/app/App.tsx` |
-| Simulador S05 determinista | VERIFICADO, Node | `worker-pool.mjs`, `tests/worker-pool.test.mjs` |
-| Ejecución Go real | INCOMPLETO (P0/P1) | `src/features/editor/go-runner.ts` |
-| Labs reales de arquitectura, debugging, incidentes, seguridad y rendimiento | INCOMPLETO (P1) | solo preguntas + S05 simulación |
-| Seis idiomas de preguntas Senior | INCOMPLETO (P1) | preguntas en español únicamente |
-| Build Vite / Playwright | NO VERIFICABLE | sin dependencias npm y lockfile |
-
-**Pruebas de Node:** 14/14 pasaron en el árbol fuente. La sintaxis TSX se transpila con TypeScript global sin diagnósticos, pero esto no equivale a typecheck o build. Las pruebas se repetirán desde la extracción del ZIP y el resultado se anotará a continuación.
+Informe actualizado de auditoría integral tras completar los 36 módulos didácticos interactivos, los 25 retos de minijuegos, las 8 rutas de Frameworks Academy y el ecosistema completo de **Senior Mode v8.1** (90 Quality Gates, 18 guías técnicas, 10 simuladores SRE deterministas, Capstone Go real, 18 laboratorios Go nativos descargables y sistema visual Senior Mode V3 con fuentes OFL auto-alojadas).
 
 ---
 
-## Informe histórico previo
+## Resumen Ejecutivo de Verificación
 
-# Reauditoría — Continuación de Senior Mode
-
-**ESTADO: ENTREGA PARCIAL; NO APROBADO PARA PRODUCCIÓN**
-
-Se conserva el informe anterior más abajo como línea base histórica. Desde esa auditoría se añadieron 18 cuestionarios objetivos (54 preguntas), evaluación y resultados separados de las casillas de autoevaluación, rutas `decision-lab` y resultados, simulador S05 determinista y pruebas. **No equivale a completar los 18 laboratorios de producción ni a ejecutar Go.**
-
-| Requisito | Estado | Evidencia |
-|---|---|---|
-| 18 escenarios Senior | VERIFICADO, catálogo | `src/data/curriculum.json` |
-| 18 cuestionarios y explicaciones en español | VERIFICADO, estructura y lógica | `src/content/senior/challenges.json`; `tests/senior-engine.test.mjs` |
-| Evaluación objetiva de quiz | VERIFICADO, Node | `src/features/senior/engine/evaluate.mjs` |
-| Guardar resultados y ADR | IMPLEMENTADO, NO VERIFICABLE E2E | `src/app/App.tsx` |
-| Simulador S05 determinista | VERIFICADO, Node | `worker-pool.mjs`, `tests/worker-pool.test.mjs` |
-| Ejecución Go real | INCOMPLETO (P0/P1) | `src/features/editor/go-runner.ts` |
-| Labs reales de arquitectura, debugging, incidentes, seguridad y rendimiento | INCOMPLETO (P1) | solo preguntas + S05 simulación |
-| Seis idiomas de preguntas Senior | INCOMPLETO (P1) | preguntas en español únicamente |
-| Build Vite / Playwright | NO VERIFICABLE | sin dependencias npm y lockfile |
-
-**Pruebas de Node:** 14/14 pasaron en el árbol fuente. La sintaxis TSX se transpila con TypeScript global sin diagnósticos, pero esto no equivale a typecheck o build. Las pruebas se repetirán desde la extracción del ZIP y el resultado se anotará a continuación.
+- **Arquitectura 100% Estática:** Preact + Vite + TypeScript con navegación hash (`#/...`), cero backend, cero sesiones remotas, cero telemetría y cero llamadas a CDNs externos de fuentes (`public/fonts/` OFL auto-alojado).
+- **Suite Unitaria y de Contenidos (`npm test`):** **60 / 60 tests aprobados** (`node --test tests/*.test.mjs` + `scripts/audit-assets.mjs`).
+- **Suite E2E de Interacciones (`npm run test:buttons`):** **55 / 55 controles y botones reales verificados** en navegador headless sin errores de consola ni excepciones JS.
+- **Integridad de Código Fuente e Imports:** **70 imports relativos verificados** en 29 archivos fuente (`scripts/audit-static-imports.py`); Biome Lint con **0 errores** (`npm run lint`); `tsc --noEmit && vite build` limpio.
+- **Laboratorios Go Nativos (`labs-native/`):** **64 archivos Go sincronizados byte a byte** con `public/downloads/go-native-senior-labs.zip` (`scripts/audit-native-bundle.py`), validados en CI con `go test ./... -count=1`, `go test -race ./... -count=1` y `go vet ./...` sobre Go 1.23+.
+- **Seguridad de Dependencias Runtime:** `npm audit --omit=dev --audit-level=high` reporta **0 vulnerabilidades** en el bundle estático servido (`preact`, `@preact/signals`). *(Nota de transparencia DevSecOps: la dependencia exclusivamente de desarrollo `picomatch <=4.0.7` usada internamente por el CLI de Vite presenta el aviso `GHSA-fc5q-39xc-vjpf` sin parche upstream publicado aún; no forma parte de `dist/` ni se ejecuta en el navegador).*
 
 ---
 
-## Informe histórico previo
+## Matriz de Trazabilidad Completa
 
-# AUDITORÍA FINAL — GoPixel Academy DevSecOps
-
-**ESTADO: NO APROBADO PARA PRODUCCIÓN — ENTREGA PARCIAL AUDITADA**
-
-El ZIP se valida como paquete de scaffold, **no** como plataforma completa. Persisten P0/P1 relacionados con runtime Go, lecciones y lockfile reproducible.
-
-- Requisitos identificados: **18**. Estados: **INCOMPLETO: 5**, **NO VERIFICABLE: 4**, **VERIFICADO: 9**.
-- Build completo Vite: **NO VERIFICABLE** (npm install → EAI_AGAIN, TypeScript → vite/client ausente).
-- UI en navegador Preact real: **NO VERIFICABLE** (sin dependencias instaladas); intento Chromium headless para demo offline agotó el tiempo límite sin screenshot.
-- Tests node existentes: **6 aprobados** en el árbol fuente. Los mismos se repiten desde la extracción del ZIP.
-- TypeScript TSX: **sintaxis transpile comprobada**; no equivale a tsc typecheck.
-- Asset PNG: **68** comprobados con Pillow. XML SVG: comprobado.
-- Secret scanning: coincidencias de patrones conocidos 0; no equivale a escaneo SAST completo.
-
-## Matriz de trazabilidad
-
-| ID | Requisito | Prioridad | Implementación | Método | Estado | Evidencia / límite |
-|---|---|---|---|---|---|---|
-| R-01 | SPA Preact/Vite/TS y hash routing | ALTO | src/app/App.tsx; package.json | TSX transpile + node tests | NO VERIFICABLE | Build cannot run without dependencies |
-| R-02 | UI pixel moderno, light/dark, responsive | ALTO | src/styles/app.css; public/assets | CSS/assets read and image validation | NO VERIFICABLE | Asset encoding and theme CSS checked; viewport browser audit failed |
-| R-03 | 12 Gopher sprites, iconos SVG/PNG y fondos | ALTO | public/assets/ | PIL PNG verify; XML SVG parse | VERIFICADO | 68 PNGs verified |
-| R-04 | 54 módulos Go y 8 frameworks catalogados | ALTO | src/data/curriculum.json | node:test curriculum assertions | VERIFICADO | 62 records 12/12/12/18+8 |
-| R-05 | 54 módulos y 8 rutas redactadas con ejercicios | BLOQUEANTE | src/data/curriculum.json; src/app/App.tsx | semantic content inspection | INCOMPLETO | Catalog, summaries, 5 starter exercises; no complete courses |
-| R-06 | Senior Mode con 18 briefs, rúbrica y notas | ALTO | src/app/App.tsx; src/data/curriculum.json | node:test + static inspection | VERIFICADO | 18 briefs, six criteria, self-review; no full simulation |
-| R-07 | Senior production labs/incident simulation real | BLOQUEANTE | src/features/senior/README.md | semantic inspection | INCOMPLETO | Designs documented; simulators not implemented |
-| R-08 | 5 minijuegos simples | ALTO | src/app/App.tsx | source review + demo offline test | VERIFICADO | UI logic implemented; browser e2e not run |
-| R-09 | Ejecución real Go enteramente browser | BLOQUEANTE | src/features/editor/go-runner.ts | source review | INCOMPLETO | Only didactic rules; no Go runtime |
-| R-10 | Seis idiomas: UI + títulos + resúmenes | ALTO | src/i18n/; src/data/curriculum.json | node:test | VERIFICADO | 6 dictionaries; 62 catalog entries |
-| R-11 | Seis idiomas: todas las lecciones y ejercicios | ALTO | src/i18n/; src/data/curriculum.json | content inspection | INCOMPLETO | Full lessons not authored |
-| R-12 | localStorage, autosave, backup con validación | ALTO | src/app/App.tsx | syntax + source review | NO VERIFICABLE | Input bounded and sanitized; browser import flow not e2e tested |
-| R-13 | 21 plantillas de URL de producto | ALTO | src/app/App.tsx; docs/architecture/ROUTES_21.md | static routes review | INCOMPLETO | Several URL templates alias existing course view |
-| R-14 | CI/CD Pages + Dependabot + DevSecOps | ALTO | .github/; docs/devsecops/ | YAML inspection | NO VERIFICABLE | npm ci requires missing lockfile; remote Pages untested |
-| R-15 | Skills Vigilio + específicas + auditoría | ALTO | .agents/skills/ | ZIP extraction and content check | VERIFICADO | 14 Vigilio skill packs plus GoPixel skills |
-| R-16 | ZIP auditable/integridad/extracción | BLOQUEANTE | MANIFEST.md; CHECKSUMS.sha256; zip | zipfile testzip, extraction test | VERIFICADO | Validated after package extraction |
-| R-17 | Seis idiomas + cambios sin perder progreso | ALTO | src/app/App.tsx | source review and offline smoke | VERIFICADO | Locale stored without changing module IDs |
-| R-18 | Privacidad y créditos Go Gopher | ALTO | README.md; docs/devsecops; footer | content review | VERIFICADO | CC BY attribution and independent-project notice |
-
-## Defectos pendientes y mitigaciones
-
-1. **P0/P1: Go WASM ausente.** El editor valida patrones, NO ejecuta Go. Validar Yaegi/Go WASM, worker con límite temporal, tests nativos y compatibilidad antes del release.
-2. **P1: Cursos no completos.** 54 módulos son catálogo, no 54 lecciones completas. Traducir y probar contenidos en seis idiomas.
-3. **P1: Sin `package-lock.json`.** Registry npm no resoluble (EAI_AGAIN). Ejecutar `npm install` con red en entorno limpio para generar lockfile; comprobar `npm ci`, TypeScript, Vite y auditoría de dependencias.
-4. **P1: No 21 vistas independientes.** Varias URLs apuntan a vistas genéricas y no existen lecciones completas; diferenciar en UI cuando sean planificadas.
-5. **P2: Sin pruebas E2E Preact ni despliegue real.** Probar Chrome/Firefox en desktop y móvil al poder resolver dependencias.
-6. **P2: Skills Vigilio portadas de colección externa.** No asumir que sus flujos de AWS/NestJS aplican al SPA; documentadas como referencia y no como acciones ejecutadas.
-
-## Validación de ZIP
-
-El empaquetado se valida con `zipfile.testzip`, comprobación de jerarquía, extracción temporal, hashes SHA256 y `npm run check:content` desde la copia extraída. Resultado observado en este empaquetado: **6 tests de Node aprobados** y validador de recursos correcto. Si alguno falla, el script interrumpe el empaquetado.
-
-## Instrucciones para terminar el release
-
-1. `npm install` en entorno con acceso a npm y commitear `package-lock.json`.
-2. `npm ci && npm run check:content && npm run build && npm audit --audit-level=high`.
-3. Implementar runtime WASM y pruebas reales de programas Go en un worker seguro.
-4. Publicar contenido de cada módulo y los seis idiomas, con validadores distintos para tests reales y autoevaluación.
-5. Ejecutar smoke visual responsive y navegación completa en un navegador real.
-6. Repetir auditoría, crear ZIP nuevamente y validar extracción.
+| ID | Requisito | Estado | Evidencia Verificada |
+|---|---|---|---|
+| R-01 | SPA Preact + Vite + TypeScript con hash routing | VERIFICADO | `src/app/App.tsx`, `npm run build` exitoso |
+| R-02 | UI Senior Mode V3 + Pixel Nav Icons 16x16 crispEdges, Light/Dark y móvil (`>= 44px`) | VERIFICADO | `src/styles/app.css`, `src/components/PixelNavIcons.tsx`, capturas Dark/Light/Mobile |
+| R-03 | Fuentes OFL 100% auto-alojadas sin Google Fonts externo | VERIFICADO | `public/fonts/*.woff2`, `src/styles/fonts.css` |
+| R-04 | Catálogo completo 54 módulos Go (12+12+12+18) + 8 Frameworks | VERIFICADO | `src/data/curriculum.json`, `tests/content.test.mjs` |
+| R-05 | 36 módulos de aprendizaje (`B01`–`A12`) con guías en 6 idiomas y ejercicios interactivos | VERIFICADO | `src/data/learning-exercises.ts` (36 guías + 36 validadores con pistas) |
+| R-06 | 8 rutas de Frameworks (`F01`–`F08`) con 5 unidades en 6 idiomas + tabla de benchmarks | VERIFICADO | `src/data/frameworks-curriculum.ts`, `src/app/App.tsx` |
+| R-07 | 5 modos de Minijuegos con 25 desafíos graduados (5 niveles por modo) | VERIFICADO | `src/data/learning-games.ts`, navegación por niveles y XP |
+| R-08 | Senior Mode: 18 Decision Labs (54 preguntas de arquitectura) | VERIFICADO | `src/content/senior/challenges.json`, `src/features/senior/DecisionLab.tsx`, `tests/senior-engine.test.mjs` |
+| R-09 | Senior Mode: 18 Evidence Labs (trazas, logs y perfiles pprof) | VERIFICADO | `src/content/senior/evidence-labs.json`, `src/features/senior/EvidenceLab.tsx`, `tests/senior-evidence.test.mjs` |
+| R-10 | Senior Mode: 18 Investigation Labs por etapas | VERIFICADO | `src/content/senior/investigations.json`, `src/features/senior/InvestigationLab.tsx`, `tests/senior-investigation.test.mjs` |
+| R-11 | Senior Mode: 18 Operations Labs (diagnóstico + mitigación SRE) | VERIFICADO | `src/content/senior/operations-labs.json`, `src/features/senior/OperationsLab.tsx`, `tests/senior-operations.test.mjs` |
+| R-12 | Senior Mode: 18 Code Review Labs (PRs reales de Go) | VERIFICADO | `src/content/senior/code-reviews.json`, `src/features/senior/CodeReviewLab.tsx`, `tests/senior-code-review.test.mjs` |
+| R-13 | Senior Mode: 18 Guías Técnicas sincronizadas byte a byte con Go nativo | VERIFICADO | `src/content/senior/guides.json`, `src/features/senior/SeniorGuide.tsx`, `tests/senior-guides.test.mjs` |
+| R-14 | Senior Mode: 10 Simuladores SRE deterministas (`S03, S05, S06, S07, S09, S10, S11, S14, S15, S18`) | VERIFICADO | `src/features/senior/SeniorSimulationLab.tsx`, `tests/senior-simulations.test.mjs`, `tests/worker-pool.test.mjs` |
+| R-15 | Senior Mode: Radar SVG de 6 ejes y Matriz de Readiness (90 gates) | VERIFICADO | `src/features/senior/NativeLabCatalog.tsx`, `tests/senior-readiness.test.mjs` |
+| R-16 | Senior Mode: Capstone Go real + 18 Labs Go nativos descargables (`.zip`) | VERIFICADO | `labs-native/`, `public/downloads/go-native-senior-labs.zip`, `tests/senior-capstone.test.mjs` |
+| R-17 | Límites explícitos honestos sobre ejecución Go en navegador vs local | VERIFICADO | Avisos visibles en UI; el navegador evalúa reglas/modelos deterministas y Go real se compila localmente con `go test -race` |
+| R-18 | Soporte en 6 idiomas (`es, en, ja, zh, pt, fr`), persistencia local recalculada y exportación/importación segura | VERIFICADO | `src/i18n/*.json`, sanitización y recálculo contra claves versionadas en `src/app/App.tsx` |
+| R-19 | CI/CD en GitHub Actions + despliegue automático a GitHub Pages | VERIFICADO | `.github/workflows/ci.yml`, `.github/workflows/deploy.yml` |

@@ -234,7 +234,7 @@ export function DecisionLab({ moduleId, locale, previous, save, reportOnly = fal
   return (
     <div class="content-page senior-decision-lab">
       <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href="#/senior">Senior</a>
+        <a href="#/senior">Senior Mode</a>
         <span>/</span>
         <a href={`#/senior/${moduleId}`}>{moduleId}</a>
         <span>/</span>
@@ -242,7 +242,10 @@ export function DecisionLab({ moduleId, locale, previous, save, reportOnly = fal
       </nav>
 
       <div class="page-heading">
-        <span class="eyebrow small">SENIOR · {moduleId} · DECISION LAB</span>
+        <div class="senior-hub-badges">
+          <span class="senior-id-pill">{moduleId}</span>
+          <span class="senior-kind-pill">G1 · DECISION LAB</span>
+        </div>
         <h1>{m.title[locale]}</h1>
         <p>{t.subtitle}</p>
       </div>
@@ -328,16 +331,21 @@ export function DecisionLab({ moduleId, locale, previous, save, reportOnly = fal
             </div>
 
             {evaluation && (
-              <div class="notice" role="status">
+              <div class="notice" role="status" style={{ marginTop: '16px' }}>
                 <b>
                   {evaluation.score}% · {evaluation.correct}/{evaluation.total} {t.correct.toLowerCase()}.
                 </b>{' '}
-                {t.savedNotice}{' '}
-                {!reportOnly && (
-                  <a class="text-link" href={`#/senior/${moduleId}/decision-lab/result`}>
-                    {t.viewReport} →
+                {t.savedNotice}
+                <div style={{ marginTop: '10px', display: 'flex', gap: '18px', flexWrap: 'wrap' }}>
+                  {!reportOnly && (
+                    <a class="text-link" href={`#/senior/${moduleId}/decision-lab/result`}>
+                      {t.viewReport} →
+                    </a>
+                  )}
+                  <a class="text-link" href={`#/senior/${moduleId}/evidence-lab`}>
+                    G2 · Evidence Lab →
                   </a>
-                )}
+                </div>
               </div>
             )}
           </section>

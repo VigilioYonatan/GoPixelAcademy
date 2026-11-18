@@ -936,7 +936,7 @@ export function SeniorSimulationLab({ moduleId, locale = 'es' }: { moduleId: str
           <span>{t.dbWrites}: <b>{s03.dbWrites}</b></span>
         </div>
         <p class={s03.isSafe ? 'feedback correct' : 'feedback incorrect'}>
-          {s03.isSafe ? 'TTL >= Ventana: Protección total contra doble escritura.' : 'TTL < Ventana: Fuga de duplicados detectada en la base de datos.'}
+          {s03.isSafe ? (locale === 'es' ? 'TTL >= Ventana: Protección total contra doble escritura.' : locale === 'en' ? 'TTL >= Window: Full protection against duplicate writes.' : locale === 'ja' ? 'TTL >= ウィンドウ：二重書き込みを完全に防止します。' : locale === 'zh' ? 'TTL >= 重试窗口：完全防止数据库重复写入。' : locale === 'pt' ? 'TTL >= Janela: Proteção total contra escrita duplicada.' : 'TTL >= Fenêtre : Protection totale contre la double écriture.') : (locale === 'es' ? 'TTL < Ventana: Fuga de duplicados detectada en la base de datos.' : locale === 'en' ? 'TTL < Window: Duplicate writes leaked into the database.' : locale === 'ja' ? 'TTL < ウィンドウ：データベースへの重複書き込みが発生しています。' : locale === 'zh' ? 'TTL < 重试窗口：检测到重复写入穿透至数据库。' : locale === 'pt' ? 'TTL < Janela: Vazamento de duplicatas detectado no banco.' : 'TTL < Fenêtre : Fuite de doublons détectée en base de données.')}
         </p>
         <p class="small-disclaimer">{t.s03Disclaimer}</p>
       </section>
@@ -1006,8 +1006,8 @@ export function SeniorSimulationLab({ moduleId, locale = 'es' }: { moduleId: str
         </div>
         <p class={s14.allocsPerOp === 0 ? 'feedback correct' : s14.p99 > 15 ? 'feedback incorrect' : 'notice'}>
           {s14.allocsPerOp === 0
-            ? 'Cero asignaciones: latencia plana sin pausas de Garbage Collection.'
-            : `Presión de memoria: ${s14.allocsPerOp} allocs/op amplifican el percentil P99 por sobrecarga de GC.`}
+            ? (locale === 'es' ? 'Cero asignaciones: latencia plana sin pausas de Garbage Collection.' : locale === 'en' ? 'Zero allocations: flat tail latency with zero GC pause pressure.' : locale === 'ja' ? 'ゼロ割り当て：GCポーズのない安定したレイテンシ。' : locale === 'zh' ? '零堆分配：尾延迟平稳，无 GC 停顿放大。' : locale === 'pt' ? 'Zero alocações: latência estável sem pausas de GC.' : 'Zéro allocation : latence stable sans pauses de GC.')
+            : (locale === 'es' ? `Presión de memoria: ${s14.allocsPerOp} allocs/op amplifican el percentil P99 por sobrecarga de GC.` : locale === 'en' ? `Memory pressure: ${s14.allocsPerOp} allocs/op amplify P99 tail latency via GC overhead.` : locale === 'ja' ? `メモリ負荷：${s14.allocsPerOp} allocs/op によりP99遅延が悪化しています。` : locale === 'zh' ? `内存压力：${s14.allocsPerOp} allocs/op 放大 P99 尾延迟。` : locale === 'pt' ? `Pressão de memória: ${s14.allocsPerOp} allocs/op amplificam o P99 por sobrecarga de GC.` : `Pression mémoire : ${s14.allocsPerOp} allocs/op amplifient le P99 via le GC.`)}
         </p>
         <p class="small-disclaimer">{t.s14Disclaimer}</p>
       </section>

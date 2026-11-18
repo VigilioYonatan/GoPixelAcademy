@@ -227,7 +227,7 @@ export function SeniorModuleHub({
   }
 
   const note = notes[moduleId] || '';
-  const hasSimulator = ['S05', 'S07', 'S09', 'S10', 'S11', 'S18'].includes(moduleId);
+  const hasSimulator = ['S03', 'S05', 'S06', 'S07', 'S09', 'S10', 'S11', 'S14', 'S15', 'S18'].includes(moduleId);
 
   const gates = [
     { code: 'G1', label: t.btnQuiz, href: `#/senior/${moduleId}/decision-lab`, res: seniorResults[moduleId] },
@@ -253,6 +253,7 @@ export function SeniorModuleHub({
           {m.challenge?.kind && (
             <span class="senior-kind-pill">{m.challenge.kind.toUpperCase()}</span>
           )}
+          {hasSimulator && <span class="senior-sim-badge">⚡ SRE Sim</span>}
           <span class="senior-gates-count">{passedGates}/5 gates</span>
         </div>
         <h1>{m.title[locale]}</h1>

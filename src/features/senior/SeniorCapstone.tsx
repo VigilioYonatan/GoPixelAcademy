@@ -20,7 +20,7 @@ export function SeniorCapstone({locale}:{locale:Locale}){
  };
  return <section class="content-page senior-capstone" aria-labelledby="capstone-heading">
  <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="#/senior">Senior Mode</a><span>/</span><b>Capstone</b></nav>
- <header class="page-heading"><span class="eyebrow small">GO · REAL SOURCE · RACE DETECTOR</span><h1 id="capstone-heading">{t.heading}</h1><p>{t.summary}</p></header>
+ <header class="page-heading"><span class="senior-kicker">GO · REAL SOURCE · RACE DETECTOR</span><h1 id="capstone-heading">{t.heading}</h1><p>{t.summary}</p></header>
  {locale!=='es'&&<p class="notice" role="note">{t.note}</p>}
  <div class="capstone-flow"><span>HTTP /orders</span><span>JSON + Auth</span><span>Store + Mutex</span><span>Outbox</span></div>
  <section class="card"><h2>{t.what}</h2><div class="capstone-cards">{capstone.steps.map(s=><article class="capstone-step" key={s.id} lang="es"><span class="eyebrow small">{s.area}</span><h3>{s.title}</h3><p>{s.detail}</p><code>{s.test}</code></article>)}</div></section>

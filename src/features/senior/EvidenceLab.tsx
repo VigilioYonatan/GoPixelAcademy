@@ -219,7 +219,7 @@ export function EvidenceLab({ moduleId, locale, previous, save, reportOnly = fal
   return (
     <div class="content-page senior-evidence-lab">
       <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href="#/senior">Senior</a>
+        <a href="#/senior">Senior Mode</a>
         <span>/</span>
         <a href={`#/senior/${moduleId}`}>{moduleId}</a>
         <span>/</span>
@@ -227,7 +227,10 @@ export function EvidenceLab({ moduleId, locale, previous, save, reportOnly = fal
       </nav>
 
       <div class="page-heading">
-        <span class="eyebrow small">SENIOR · {moduleId} · {ev.kind.toUpperCase()}</span>
+        <div class="senior-hub-badges">
+          <span class="senior-id-pill">{moduleId}</span>
+          <span class="senior-kind-pill">G2 · {ev.kind.toUpperCase()}</span>
+        </div>
         <h1>{m.title[locale]}</h1>
         <p>{ev.title}</p>
       </div>
@@ -309,11 +312,16 @@ export function EvidenceLab({ moduleId, locale, previous, save, reportOnly = fal
                   );
                 })}
                 <p>{ev.explanation}</p>
-                {!reportOnly && (
-                  <a class="text-link" href={`#/senior/${moduleId}/evidence-lab/result`}>
-                    {t.viewResult} →
+                <div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap' }}>
+                  {!reportOnly && (
+                    <a class="text-link" href={`#/senior/${moduleId}/evidence-lab/result`}>
+                      {t.viewResult} →
+                    </a>
+                  )}
+                  <a class="text-link" href={`#/senior/${moduleId}/investigation-lab`}>
+                    G3 · Investigation Lab →
                   </a>
-                )}
+                </div>
               </div>
             )}
           </section>

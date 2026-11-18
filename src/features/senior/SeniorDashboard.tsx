@@ -279,7 +279,7 @@ export function SeniorDashboard({
               <span>{t.kpiGates}</span>
             </div>
             <div class="senior-kpi-item">
-              <strong>6</strong>
+              <strong>10</strong>
               <span>{t.kpiSimulators}</span>
             </div>
             <div class="senior-kpi-item">
@@ -360,6 +360,7 @@ export function SeniorDashboard({
             const passCount = getPassCount(x.id);
             const isDone = passCount === 5;
             const isProgress = passCount > 0 && passCount < 5;
+            const hasSim = ['S03', 'S05', 'S06', 'S07', 'S09', 'S10', 'S11', 'S14', 'S15', 'S18'].includes(x.id);
 
             return (
               <a class="senior-card senior-card-v2" key={x.id} href={`#/senior/${x.id}`}>
@@ -370,6 +371,7 @@ export function SeniorDashboard({
                   <span class="senior-gates-count">
                     {passCount}/5 {t.gatesWord}
                   </span>
+                  {hasSim && <span class="senior-sim-badge">⚡ Sim</span>}
                 </div>
 
                 <h3 class="senior-card-title">{x.title[locale]}</h3>

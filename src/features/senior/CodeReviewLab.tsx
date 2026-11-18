@@ -34,7 +34,7 @@ export function CodeReviewLab({moduleId,locale,previous,save,reportOnly=false}:P
  };
  return <section class="content-page senior-code-review" aria-labelledby="review-title">
   <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="#/senior">Senior Mode</a><span>/</span><a href={`#/senior/${moduleId}`}>{moduleId}</a><span>/</span><b>{t.heading}</b></nav>
-  <header class="page-heading"><span class="eyebrow small">{moduleId} · PEER REVIEW</span><h1 id="review-title">{module?.title[locale]??t.heading}</h1><p>{lab.title}</p></header>
+  <header class="page-heading"><div class="senior-hub-badges"><span class="senior-id-pill">{moduleId}</span><span class="senior-kind-pill">G5 · PEER REVIEW</span></div><h1 id="review-title">{module?.title[locale]??t.heading}</h1><p>{lab.title}</p></header>
   {t.languageNote&&<p class="notice" role="note">{t.languageNote}</p>}
   <div class="senior-lab-grid"><div class="senior-lab-main">
    <section class="card"><h2>{t.code}</h2><pre class="mini-code review-code"><code>{lab.code}</code></pre><p class="small-disclaimer">{t.disclaimer}</p></section>

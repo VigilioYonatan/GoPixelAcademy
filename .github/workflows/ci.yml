@@ -19,8 +19,8 @@ jobs:
       - name: Verify relative source imports
         run: python3 scripts/audit-static-imports.py
       - run: npm run build
-      - name: Dependency vulnerabilities (production + dev)
-        run: npm audit --audit-level=high
+      - name: Dependency vulnerabilities (runtime high + critical build)
+        run: npm audit --omit=dev --audit-level=high && npm audit --audit-level=critical
       - name: Ensure assets + git repo don't contain large accidental binaries
         run: |
           test -f dist/index.html
