@@ -48,7 +48,10 @@ export function cleanForSpeech(text: string): string {
     .replace(/map\[string\]string/g, 'mapa de string a string')
     .replace(/\*n \+= 1/g, 'desreferenciar ene y sumar uno')
     .replace(/if err != nil/g, 'si error es distinto de nil')
-    .replace(/comma-ok/g, 'coma ok');
+    .replace(/comma-ok/g, 'coma ok')
+    .replace(/bufio\.NewScanner/g, 'bufio punto New Scanner')
+    .replace(/scanner\.Scan\(\)/g, 'scanner punto Scan')
+    .replace(/ErrNotFound/g, 'error Not Found');
 }
 
 export function isSpeechSupported(): boolean {

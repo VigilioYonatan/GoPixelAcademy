@@ -2622,6 +2622,376 @@ const LESSON_ANCHOR_DECKS: Record<string, CinemaDeck> = {
       },
     ],
   }),
+
+  B12: attachAudio({
+    id: 'LESSON-B12',
+    kicker: 'FUNDAMENTOS GO · PROYECTO B12',
+    heading: 'Mini Bank integrador: receptor *Cuenta, Depositar y Retirar con error',
+    ctaLabel: 'Completar Cuenta Mini Bank abajo',
+    ctaHref: '#/lesson/B12',
+    scenes: [
+      {
+        chapter: '01 · Saldo Inmutable Bug',
+        title: 'Receptores por valor pierden el depósito y rompen invariantes',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Lección B12: cerramos todo el módulo básico con el proyecto Mini Bank. Si definimos Depositar o Retirar sin receptor por puntero, los saldos de la cuenta jamás cambian y un retiro mayor al saldo quedaría negativo.',
+        visual: {
+          kind: 'code-diff',
+          file: 'minibank.go',
+          before: [
+            'func (c Cuenta) Depositar(m float64) { c.Saldo += m } // copia!',
+            'func (c Cuenta) Retirar(m float64) { c.Saldo -= m }   // sin error!',
+          ],
+          after: [
+            'func (c *Cuenta) Depositar(m float64) { c.Saldo += m }',
+            'func (c *Cuenta) Retirar(m float64) error {',
+            '    if m > c.Saldo { return errors.New("fondos insuficientes") }',
+          ],
+          callout: 'Receptor puntero *Cuenta muta el saldo real validando fondos.',
+        },
+      },
+      {
+        chapter: '02 · Reglas de Negocio',
+        title: 'Mutar con *Cuenta y defender invariantes al inicio de Retirar',
+        durationSec: 11,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Usa siempre receptor por puntero sobre Cuenta para mutar el saldo original, valida invariantes de negocio al inicio de Retirar devolviendo errors.New cuando falten fondos y registra tests unitarios de borde.',
+        visual: {
+          kind: 'architecture',
+          mode: 'mitigated',
+          nodes: [
+            { label: 'Depositar(50)', sub: '100 -> 150 sobre *Cuenta', state: 'ok' },
+            { label: 'Retirar(30)', sub: '150 -> 120 · error nil', state: 'ok' },
+            { label: 'Retirar(999)', sub: 'Rechazo: fondos insuficientes', state: 'ok' },
+          ],
+          metricLabel: 'Puente a Senior Fintech (S03 / S10)',
+          metricBefore: 'Saldo corrupto o negativo',
+          metricAfter: 'Invariantes bancarios íntegros ✓',
+        },
+      },
+      {
+        chapter: '03 · 100% Track Básico',
+        title: 'Completa B12 y da el salto al nivel Intermedio de Go',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Al superar B12 dominas los doce fundamentos completos de Go y estás listo para pasar a nivel intermedio y a escenarios financieros reales como S03 y S10. Completa Depositar y Retirar ahora.',
+        visual: {
+          kind: 'terminal',
+          title: 'b12-minibank · 12/12 Track Básico Completo',
+          lines: [
+            { prompt: '$', text: 'go run minibank.go', tone: 'cmd' },
+            { text: 'Saldo final: 120.00 (Error: <nil>)', tone: 'ok' },
+            { text: 'PASS · Track Básico 12/12 completado', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  I02: attachAudio({
+    id: 'LESSON-I02',
+    kicker: 'INTERMEDIO GO · LECCIÓN I02',
+    heading: 'Genéricos con type parameters [T int | float64] seguros y rápidos',
+    ctaLabel: 'Escribir Minimo[T] abajo',
+    ctaHref: '#/lesson/I02',
+    scenes: [
+      {
+        chapter: '01 · Duplicación vs any',
+        title: '¿Cómo reutilizar algoritmos numéricos sin perder seguridad de tipos?',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'violet',
+        speaker: 'host',
+        speech:
+          'Lección I02: genéricos en Go. Antes de Go uno punto dieciocho teníamos que duplicar la misma función para enteros y flotantes o perder tipos usando interfaces vacías. ¿Cómo resuelven esto los genéricos sin perder velocidad?',
+        visual: {
+          kind: 'code-diff',
+          file: 'generics.go',
+          before: [
+            'func MinInt(a, b int) int',
+            'func MinFloat(a, b float64) float64 // código duplicado',
+          ],
+          after: [
+            'func Minimo[T int | float64](a, b T) T {',
+            '    if a < b { return a }; return b',
+            '}',
+          ],
+          callout: 'Restricción exacta [T int | float64] verificada en compilación.',
+        },
+      },
+      {
+        chapter: '02 · Type Constraints',
+        title: 'Parámetros de tipo entre corchetes verificados al compilar',
+        durationSec: 11,
+        mascot: 'architecture',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Con parámetros de tipo entre corchetes y restricciones exactas como int barra float64, el compilador verifica cada llamada en tiempo de compilación generando código seguro sin conversiones en runtime ni cajas extra.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'Llamadas tipadas a Minimo',
+          stackItems: [
+            { name: 'Minimo(10, 20)', value: 'T = int (cero boxing)', state: 'ok' },
+            { name: 'Minimo(3.14, 2.71)', value: 'T = float64 exacto', state: 'ok' },
+          ],
+          heapLabel: 'Ventaja de Diseño Go 1.18+',
+          heapItems: [
+            { addr: 'ZERO-CAST', data: 'Sin type assertions en tiempo de ejecución', note: 'Compila o falla rápido en build' },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Práctica I02',
+        title: 'Implementa Minimo[T int | float64](a, b T) T sin sobre-abstraer',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Implementa solo abstracciones genéricas cuando reduzcan duplicación real manteniendo interfaces claras para comportamiento. Escribe Minimo[T int | float64](a, b T) T en el editor de I02.',
+        visual: {
+          kind: 'terminal',
+          title: 'i02-generics · go run',
+          lines: [
+            { prompt: '$', text: 'Minimo(10, 20) · Minimo(3.14, 2.71)', tone: 'cmd' },
+            { text: 'Mínimo int: 10 | Mínimo float: 2.71', tone: 'ok' },
+            { text: 'PASS · Type parameters verificados', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  I03: attachAudio({
+    id: 'LESSON-I03',
+    kicker: 'INTERMEDIO GO · LECCIÓN I03',
+    heading: 'Paquetes, módulos go.mod y visibilidad por mayúscula',
+    ctaLabel: 'Exportar CalcularTotal abajo',
+    ctaHref: '#/lesson/I03',
+    scenes: [
+      {
+        chapter: '01 · Regla de Mayúsculas',
+        title: 'Adiós keywords public/private: la primera letra define la API pública',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'cyan',
+        speaker: 'host',
+        speech:
+          'Lección I03: paquetes y módulos. En otros lenguajes escribimos palabras clave como public, private o protected en cada método. ¿Por qué en Go basta revisar la primera letra del identificador?',
+        visual: {
+          kind: 'code-diff',
+          file: 'billing/totals.go',
+          before: [
+            'func calcularTotal(precios []float64) float64 // privada al paquete',
+          ],
+          after: [
+            'func CalcularTotal(precios []float64) float64 // exportada (pública)',
+          ],
+          callout: 'Mayúscula = exportada al módulo; minúscula = encapsulada.',
+        },
+      },
+      {
+        chapter: '02 · Encapsulación Limpia',
+        title: 'Fronteras claras por paquete dentro de go.mod sin ciclos',
+        durationSec: 11,
+        mascot: 'architecture',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Go simplifica la encapsulación al máximo: todo símbolo con inicial mayúscula como CalcularTotal es público para otros paquetes de tu módulo go.mod, mientras que las minúsculas permanecen ocultas como detalle interno.',
+        visual: {
+          kind: 'architecture',
+          mode: 'mitigated',
+          nodes: [
+            { label: 'go.mod', sub: 'Módulo raíz versionado', state: 'ok' },
+            { label: 'CalcularTotal', sub: 'Contrato público exportado', state: 'ok' },
+            { label: 'helper()', sub: 'Detalle interno oculto', state: 'ok' },
+          ],
+          metricLabel: 'Regla del compilador Go',
+          metricBefore: 'Ciclos de importación acoplados',
+          metricAfter: 'Grafo acíclico de paquetes (DAG) ✓',
+        },
+      },
+      {
+        chapter: '03 · Práctica I03',
+        title: 'Implementa CalcularTotal(precios []float64) float64 en I03',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Un buen paquete se diseña por fronteras claras evitando dependencias circulares entre archivos, regla clave de S02 en Senior Mode. Declara ahora CalcularTotal exportada para aprobar I03.',
+        visual: {
+          kind: 'terminal',
+          title: 'i03-packages · verificación',
+          lines: [
+            { prompt: '$', text: 'CalcularTotal([]float64{10.50, 4.25, 15.00})', tone: 'cmd' },
+            { text: 'Total exportado: $29.75', tone: 'ok' },
+            { text: 'PASS · Visibilidad exportada verificada', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  I04: attachAudio({
+    id: 'LESSON-I04',
+    kicker: 'INTERMEDIO GO · LECCIÓN I04',
+    heading: 'Error wrapping con %w, centinelas ErrNotFound y errors.Is',
+    ctaLabel: 'Envolver error con %w abajo',
+    ctaHref: '#/lesson/I04',
+    scenes: [
+      {
+        chapter: '01 · %v vs %w',
+        title: 'Usar %v destruye la cadena causal de un error centinela',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Lección I04: manejo avanzado de errores. Cuando añadimos contexto formateando un error con por ciento uve en vez de por ciento doble ve, rompemos la cadena causal original y perdemos el rastro. ¿Cuál es la diferencia real?',
+        visual: {
+          kind: 'code-diff',
+          file: 'errors_wrap.go',
+          before: [
+            'return fmt.Errorf("fallo id %d: %v", id, ErrNotFound) // rompe cadena!',
+          ],
+          after: [
+            'return fmt.Errorf("fallo de búsqueda id %d: %w", id, ErrNotFound)',
+            'if errors.Is(err, ErrNotFound) { /* responder HTTP 404 */ }',
+          ],
+          callout: '%w envuelve ErrNotFound permitiendo inspección profunda con errors.Is.',
+        },
+      },
+      {
+        chapter: '02 · Cadena Causal Intacta',
+        title: 'Contexto en cada capa + detección exacta con errors.Is / errors.As',
+        durationSec: 11,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Envolver un error centinela como ErrNotFound usando fmt.Errorf con %w adjunta el contexto del fallo actual manteniendo intacta la causa raíz, para que las capas superiores decidan HTTP cuatrocientos cuatro con errors.Is.',
+        visual: {
+          kind: 'architecture',
+          mode: 'mitigated',
+          nodes: [
+            { label: 'ErrNotFound', sub: 'Centinela raíz en repositorio', state: 'ok' },
+            { label: 'fmt.Errorf("%w")', sub: 'Envoltorio contextual', state: 'ok' },
+            { label: 'errors.Is()', sub: 'Detecta causa en Handler HTTP', state: 'ok' },
+          ],
+          metricLabel: 'Diagnóstico en Logs y Tests',
+          metricBefore: 'err.Error() == "..." frágil',
+          metricAfter: 'errors.Is preserva causa raíz ✓',
+        },
+      },
+      {
+        chapter: '03 · Práctica I04',
+        title: 'Aplica %w + errors.Is en BuscarItem para superar I04',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Jamás compares mensajes de error por texto ni ocultes fallos silenciosos con barra baja; esta práctica directa conecta con S01 y S12. Implementa BuscarItem envolviendo ErrNotFound en I04.',
+        visual: {
+          kind: 'terminal',
+          title: 'i04-errors · cadena preservada',
+          lines: [
+            { prompt: '$', text: 'err := BuscarItem(-1); errors.Is(err, ErrNotFound)', tone: 'cmd' },
+            { text: 'Error centinela detectado: fallo de búsqueda id -1: no encontrado', tone: 'ok' },
+            { text: 'PASS · Error wrapping idiomático verificado', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  I05: attachAudio({
+    id: 'LESSON-I05',
+    kicker: 'INTERMEDIO GO · LECCIÓN I05',
+    heading: 'Streams seguros con bufio.NewScanner sin volcar gigas en RAM',
+    ctaLabel: 'Escáner de stream en I05',
+    ctaHref: '#/lesson/I05',
+    scenes: [
+      {
+        chapter: '01 · Riesgo OOM',
+        title: 'Leer archivos masivos enteros en RAM provoca caídas OOM en producción',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Lección I05: archivos y streams. Si un servicio lee un archivo de logs de dos gigabytes entero de golpe en memoria antes de procesarlo, dispara un agotamiento de memoria instantáneo en producción. ¿Cómo lo procesamos en streaming?',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'problem',
+          stackLabel: 'io.ReadAll sobre 2 GB',
+          stackItems: [
+            { name: 'Buffer Completo', value: '2,048 MB en RAM', state: 'moved' },
+          ],
+          heapLabel: 'Consecuencia en Contenedor',
+          heapItems: [
+            { addr: 'OOM-KILL', data: 'Contenedor terminado por límite de RAM', note: 'Sin procesamiento incremental', alert: true },
+          ],
+        },
+      },
+      {
+        chapter: '02 · Buffer Incremental O(1)',
+        title: 'bufio.NewScanner consume línea por línea con RAM constante',
+        durationSec: 11,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Usa bufio.NewScanner sobre cualquier io.Reader: lee por bloques pequeños manteniendo una memoria O(1) acotada mientras el bucle scanner.Scan() consume línea por línea sin almacenar el archivo completo en RAM.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'bufio.NewScanner (Stream)',
+          stackItems: [
+            { name: 'Buffer Scanner', value: '4 KB - 64 KB constante', state: 'ok' },
+            { name: 'for scanner.Scan()', value: '1 línea a la vez', state: 'ok' },
+          ],
+          heapLabel: 'Ventaja Operativa Go',
+          heapItems: [
+            { addr: 'IO-READER', data: 'Funciona igual con archivos, sockets o strings', note: 'Composición sobre interfaces' },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Práctica I05',
+        title: 'Valida contarLineas usando bufio.NewScanner y scanner.Scan()',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Recuerda verificar scanner punto Err al terminar la lectura y limitar tamaños máximos ante entradas externas no confiables. Completa contarLineas con bufio.NewScanner para superar I05.',
+        visual: {
+          kind: 'terminal',
+          title: 'i05-streams · streaming O(1)',
+          lines: [
+            { prompt: '$', text: 'scanner := bufio.NewScanner(strings.NewReader(txt))', tone: 'cmd' },
+            { text: 'Total líneas escaneadas: 3', tone: 'ok' },
+            { text: 'PASS · Lectura en stream segura verificada', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
 };
 
 export function getLessonCinemaDeck(lessonId: string): CinemaDeck | undefined {

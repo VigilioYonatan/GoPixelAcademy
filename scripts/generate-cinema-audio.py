@@ -156,6 +156,17 @@ def clean_for_speech(text: str) -> str:
         ("B09", "be cero nueve"),
         ("B10", "be diez"),
         ("B11", "be once"),
+        ("B12", "be doce"),
+        ("I02", "i cero dos"),
+        ("I03", "i cero tres"),
+        ("I04", "i cero cuatro"),
+        ("I05", "i cero cinco"),
+        ("ErrNotFound", "error Not Found"),
+        ("bufio.NewScanner", "bufio punto New Scanner"),
+        ("scanner.Scan()", "scanner punto Scan"),
+        ("Minimo[T int | float64](a, b T) T", "Mínimo genérico de tipo te entero o decimal"),
+        ("CalcularTotal", "Calcular Total"),
+        ("O(1)", "o constante de uno"),
         ("comma-ok", "coma ok"),
         ("map[string]string", "mapa de string a string"),
         ("incrementar(&valor)", "incrementar pasando la dirección de valor"),
@@ -1217,8 +1228,125 @@ def build_batch_7_scripts() -> dict[str, tuple[str, list[dict]]]:
     return decks
 
 
+def build_batch_8_scripts() -> dict[str, tuple[str, list[dict]]]:
+    """Next 5 capsules: LESSON-B12 (100% Basic done) + LESSON-I02..I05."""
+    decks: dict[str, tuple[str, list[dict]]] = {}
+
+    # 36. LESSON-B12 (Proyecto integrador: Mini Bank)
+    decks["LESSON-B12"] = (
+        "lesson-b12.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección B12: cerramos todo el módulo básico con el proyecto Mini Bank. Si definimos Depositar o Retirar sin receptor por puntero, los saldos de la cuenta jamás cambian y un retiro mayor al saldo quedaría negativo.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Usa siempre receptor por puntero sobre Cuenta para mutar el saldo original, valida invariantes de negocio al inicio de Retirar devolviendo errors.New cuando falten fondos y registra tests unitarios de borde.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Al superar B12 dominas los doce fundamentos completos de Go y estás listo para pasar a nivel intermedio y a escenarios financieros reales como S03 y S10. Completa Depositar y Retirar ahora.",
+            },
+        ],
+    )
+
+    # 37. LESSON-I02 (Genéricos con type parameters)
+    decks["LESSON-I02"] = (
+        "lesson-i02.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección I02: genéricos en Go. Antes de Go uno punto dieciocho teníamos que duplicar la misma función para enteros y flotantes o perder tipos usando interfaces vacías. ¿Cómo resuelven esto los genéricos sin perder velocidad?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Con parámetros de tipo entre corchetes y restricciones exactas como int barra float64, el compilador verifica cada llamada en tiempo de compilación generando código seguro sin conversiones en runtime ni cajas extra.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Implementa solo abstracciones genéricas cuando reduzcan duplicación real manteniendo interfaces claras para comportamiento. Escribe Minimo[T int | float64](a, b T) T en el editor de I02.",
+            },
+        ],
+    )
+
+    # 38. LESSON-I03 (Paquetes, módulos y visibilidad por mayúscula)
+    decks["LESSON-I03"] = (
+        "lesson-i03.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección I03: paquetes y módulos. En otros lenguajes escribimos palabras clave como public, private o protected en cada método. ¿Por qué en Go basta revisar la primera letra del identificador?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Go simplifica la encapsulación al máximo: todo símbolo con inicial mayúscula como CalcularTotal es público para otros paquetes de tu módulo go.mod, mientras que las minúsculas permanecen ocultas como detalle interno.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Un buen paquete se diseña por fronteras claras evitando dependencias circulares entre archivos, regla clave de S02 en Senior Mode. Declara ahora CalcularTotal exportada para aprobar I03.",
+            },
+        ],
+    )
+
+    # 39. LESSON-I04 (Error wrapping %w y centinelas con errors.Is)
+    decks["LESSON-I04"] = (
+        "lesson-i04.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección I04: manejo avanzado de errores. Cuando añadimos contexto formateando un error con por ciento uve en vez de por ciento doble ve, rompemos la cadena causal original y perdemos el rastro. ¿Cuál es la diferencia real?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Envolver un error centinela como ErrNotFound usando fmt.Errorf con %w adjunta el contexto del fallo actual manteniendo intacta la causa raíz, para que las capas superiores decidan HTTP cuatrocientos cuatro con errors.Is.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Jamás compares mensajes de error por texto ni ocultes fallos silenciosos con barra baja; esta práctica directa conecta con S01 y S12. Implementa BuscarItem envolviendo ErrNotFound en I04.",
+            },
+        ],
+    )
+
+    # 40. LESSON-I05 (Archivos y streams con bufio.NewScanner)
+    decks["LESSON-I05"] = (
+        "lesson-i05.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección I05: archivos y streams. Si un servicio lee un archivo de logs de dos gigabytes entero de golpe en memoria antes de procesarlo, dispara un agotamiento de memoria instantáneo en producción. ¿Cómo lo procesamos en streaming?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Usa bufio.NewScanner sobre cualquier io.Reader: lee por bloques pequeños manteniendo una memoria O(1) acotada mientras el bucle scanner.Scan() consume línea por línea sin almacenar el archivo completo en RAM.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Recuerda verificar scanner punto Err al terminar la lectura y limitar tamaños máximos ante entradas externas no confiables. Completa contarLineas con bufio.NewScanner para superar I05.",
+            },
+        ],
+    )
+
+    return decks
+
+
 async def main() -> None:
-    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch7"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch8"
     AUDIO_OUT_DIR.mkdir(parents=True, exist_ok=True)
     if mode == "--all":
         decks = {
@@ -1229,6 +1357,7 @@ async def main() -> None:
             **build_batch_5_scripts(),
             **build_batch_6_scripts(),
             **build_batch_7_scripts(),
+            **build_batch_8_scripts(),
         }
     elif mode == "--batch1":
         decks = build_batch_1_scripts()
@@ -1242,8 +1371,10 @@ async def main() -> None:
         decks = build_batch_5_scripts()
     elif mode == "--batch6":
         decks = build_batch_6_scripts()
-    else:
+    elif mode == "--batch7":
         decks = build_batch_7_scripts()
+    else:
+        decks = build_batch_8_scripts()
     print(f"🎙️ Generando {len(decks)} pistas de audio neuronal HD + mastering de estudio con {FFMPEG}...")
     sem = asyncio.Semaphore(5)
 
