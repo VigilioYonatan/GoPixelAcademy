@@ -6,27 +6,18 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const manifestPath = resolve(root, 'src/features/cinema/audio-manifest.json');
+const curriculumPath = resolve(root, 'src/data/curriculum.json');
 
-test('gopher cinema audio manifest has 15 valid pre-mastered studio tracks (Batch 1 + 2 + 3)', () => {
+test('gopher cinema audio manifest covers 100% of Senior Mode (S01-S18) + Home + Overview (20 studio tracks)', () => {
   assert.ok(existsSync(manifestPath), 'audio-manifest.json must exist');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-  const expectedIds = [
-    'HOME-INTRO',
-    'SENIOR-OVERVIEW',
-    'SENIOR-S01',
-    'SENIOR-S02',
-    'SENIOR-S03',
-    'SENIOR-S04',
-    'SENIOR-S05',
-    'SENIOR-S06',
-    'SENIOR-S07',
-    'SENIOR-S08',
-    'SENIOR-S09',
-    'SENIOR-S10',
-    'SENIOR-S11',
-    'SENIOR-S12',
-    'SENIOR-S13',
-  ];
+  const seniorModules = JSON.parse(readFileSync(curriculumPath, 'utf8'))
+    .filter(m => m.track === 'senior')
+    .map(m => `SENIOR-${m.id}`);
+
+  assert.equal(seniorModules.length, 18, 'Expected 18 Senior Mode modules');
+  const expectedIds = ['HOME-INTRO', 'SENIOR-OVERVIEW', ...seniorModules];
+
   for (const id of expectedIds) {
     const entry = manifest[id];
     assert.ok(entry, `Missing audio manifest entry for ${id}`);

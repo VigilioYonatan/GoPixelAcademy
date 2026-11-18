@@ -10,7 +10,7 @@ description: Reproductor minimalista de cuadro único (GopherPlayer) con pizarra
 - `src/features/cinema/cinema.types.ts` — contratos `CinemaDeck`, `CinemaScene`, `StageVisual`, `SpeakerRole` y `StudioAudioMeta`.
 - `src/features/cinema/audio-manifest.json` — tiempos exactos (`totalSec`, `cues[]`, `speakers[]`) medidos tras mastering `ffmpeg`.
 - `src/features/cinema/audio.ts` — `resolveStudioAudio` y `cleanForSpeech` adaptado a Go.
-- `src/features/cinema/storyboards.ts` — `HOME_INTRO_DECK`, `SENIOR_OVERVIEW_DECK` y guiones curados Senior (`S01..S03` en lote 1, expandible a `S18`).
+- `src/features/cinema/storyboards.ts` — `HOME_INTRO_DECK`, `SENIOR_OVERVIEW_DECK` y los 18 briefings curados Senior (`S01..S18` completos).
 - `src/features/cinema/GopherPlayer.tsx` — reproductor `16:9` de cuadro único con póster `▶`, ecualizador de locutor, 5 pizarras Go (`terminal`, `stack-heap`, `lanes`, `code-diff`, `architecture`), `WebVTT` (`<track kind="captions">`), `scrubber` continuo y reloj dual resiliente.
 - `scripts/generate-cinema-audio.py` — pipeline TTS 2 voces (`es-CO-SalomeNeural` + `es-ES-AlvaroNeural`) + mastering DSP (`ffmpeg` → `public/audio/*.mp3`).
 

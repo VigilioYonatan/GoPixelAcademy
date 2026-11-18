@@ -89,13 +89,20 @@ def clean_for_speech(text: str) -> str:
         ("%w", "por ciento doble ve"),
         ("%v", "por ciento uve"),
         ("TTL", "tiempo de vida té té ele"),
+        ("p95/p99", "pe noventa y cinco y pe noventa y nueve"),
         ("P99", "pe noventa y nueve"),
         ("p99", "pe noventa y nueve"),
         ("pprof", "pe prof"),
         ("OOM", "agotamiento de memoria"),
         ("ADR", "documento de arquitectura"),
         ("ADRs", "documentos de arquitectura"),
+        ("RFC", "propuesta técnica erre efe ce"),
+        ("SLO", "objetivo de nivel de servicio"),
         ("SRE", "fiabilidad operativa"),
+        ("expand-and-contract", "expansión y contracción gradual"),
+        ("grace period", "ventana de gracia"),
+        ("readiness", "sonda de preparación"),
+        ("panic", "pánico en tiempo de ejecución"),
         ("HTTP 409", "HTTP cuatrocientos nueve"),
         ("409 Conflict", "cuatrocientos nueve conflicto"),
         ("POST /charge", "POST barra charge"),
@@ -693,17 +700,141 @@ def build_batch_3_scripts() -> dict[str, tuple[str, list[dict]]]:
     return decks
 
 
+def build_batch_4_scripts() -> dict[str, tuple[str, list[dict]]]:
+    """Final 5 Senior Mode capsules: SENIOR-S14, SENIOR-S15, SENIOR-S16, SENIOR-S17, SENIOR-S18."""
+    decks: dict[str, tuple[str, list[dict]]] = {}
+
+    # 16. SENIOR-S14 (Observabilidad e incidentes, P95/P99 y cardinalidad)
+    decks["SENIOR-S14"] = (
+        "senior-s14.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S14: observabilidad e incidentes. Nuestro panel muestra una latencia promedio excelente de diez milisegundos, pero clientes reales reportan bloqueos de tres segundos en el checkout. ¿Por qué miente el gráfico?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "La media esconde siempre las colas largas: un uno por ciento de peticiones sufriendo pausas de recolector de basura destruye la experiencia aunque el promedio luzca verde. Observa percentiles p95/p99 junto a errores y throughput.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Correlaciona logs y trazas con context, evita etiquetas con cardinalidad explosiva como IDs de usuario, diseña alertas basadas en SLO y prueba el cálculo exacto de percentiles con go test -race.",
+            },
+        ],
+    )
+
+    # 17. SENIOR-S15 (Despliegue, readiness y graceful shutdown)
+    decks["SENIOR-S15"] = (
+        "senior-s15.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S15: despliegue y operaciones. Cada vez que subimos una nueva versión a producción caen conexiones activas con error 502 o surgen panic al cerrar canales mientras aún llegan peticiones.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "El orden del apagado es sagrado: primero marca readiness como falso para sacar la instancia del balanceador, detén a los productores y drena los trabajos en curso dentro de un grace period acotado.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Solo el dueño del canal puede cerrarlo cuando nadie más envía; valida apagado doble, cancelación y cero goroutines huérfanas con go test -race, y documenta tu rollback reversible.",
+            },
+        ],
+    )
+
+    # 18. SENIOR-S16 (Migraciones, expand-and-contract y compatibilidad)
+    decks["SENIOR-S16"] = (
+        "senior-s16.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S16: migraciones y mantenimiento. Renombramos un campo del JSON y una columna SQL en el mismo despliegue; al instante fallaron las aplicaciones móviles con la versión anterior. ¿Cómo evolucionamos sin romper?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Aplica el patrón expand-and-contract: primero despliega soporte dual aceptando formatos antiguos y nuevos durante una ventana de coexistencia segura, antes de retirar campos heredados.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Versiona esquemas, prueba tanto cargas históricas como campos desconocidos ejecutando go test -race y define métricas de adopción junto con un plan de rollback antes de contraer el contrato.",
+            },
+        ],
+    )
+
+    # 19. SENIOR-S17 (Liderazgo técnico, RFC, ADRs y prioridad en Code Review)
+    decks["SENIOR-S17"] = (
+        "senior-s17.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S17: liderazgo técnico. Frente a un Pull Request enorme o un RFC complejo, es fácil enredarse discutiendo estilos menores y dejar pasar un riesgo grave de concurrencia o seguridad.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Una revisión Senior evalúa primero corrección, invariantes y seguridad, nunca opiniones subjetivas sin respaldo. Prioriza cada hallazgo multiplicando su probabilidad por su impacto real.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Evita comentarios vagos: enlaza la prueba concreta que reproduce el riesgo, propón una alternativa medible en go test -race y preserva siempre el porqué de las decisiones en tus ADRs.",
+            },
+        ],
+    )
+
+    # 20. SENIOR-S18 (System Design final, Ley de Little y backpressure)
+    decks["SENIOR-S18"] = (
+        "senior-s18.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Caso S18: examen final de System Design. Debemos diseñar una plataforma distribuida de trabajos bajo picos intensos. La tentación rápida es subir workers a diez mil y esperar lo mejor, ¿cierto?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Subir workers sin proteger las dependencias aguas abajo solo multiplica la contención y empeora el P99. Dimensiona concurrencia con la Ley de Little multiplicando tasa de llegada por latencia y utilización objetivo.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Aclara restricciones antes de dibujar cajas, diseña etapas incrementales con backpressure explícito, prueba tasas extremas de saturación con go test -race y completa ahora tu Capstone Senior.",
+            },
+        ],
+    )
+
+    return decks
+
+
 async def main() -> None:
-    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch3"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch4"
     AUDIO_OUT_DIR.mkdir(parents=True, exist_ok=True)
     if mode == "--all":
-        decks = {**build_batch_1_scripts(), **build_batch_2_scripts(), **build_batch_3_scripts()}
+        decks = {
+            **build_batch_1_scripts(),
+            **build_batch_2_scripts(),
+            **build_batch_3_scripts(),
+            **build_batch_4_scripts(),
+        }
     elif mode == "--batch1":
         decks = build_batch_1_scripts()
     elif mode == "--batch2":
         decks = build_batch_2_scripts()
-    else:
+    elif mode == "--batch3":
         decks = build_batch_3_scripts()
+    else:
+        decks = build_batch_4_scripts()
     print(f"🎙️ Generando {len(decks)} pistas de audio neuronal HD + mastering de estudio con {FFMPEG}...")
     sem = asyncio.Semaphore(5)
 

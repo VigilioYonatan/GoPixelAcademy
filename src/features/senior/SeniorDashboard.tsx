@@ -102,6 +102,7 @@ const labels: Record<Locale, {
   kpiScenarios: string;
   kpiGates: string;
   kpiSimulators: string;
+  kpiVideos: string;
   kpiProgress: string;
   nativeBtn: string;
   readinessBtn: string;
@@ -120,6 +121,7 @@ const labels: Record<Locale, {
     kpiScenarios: 'Escenarios reales',
     kpiGates: 'Quality gates',
     kpiSimulators: 'Simuladores SRE',
+    kpiVideos: 'Videos estudio HD',
     kpiProgress: 'Gates superados',
     nativeBtn: 'Laboratorios Go nativos (18) ↓',
     readinessBtn: 'Mapa de competencias →',
@@ -138,6 +140,7 @@ const labels: Record<Locale, {
     kpiScenarios: 'Production scenarios',
     kpiGates: 'Quality gates',
     kpiSimulators: 'SRE simulators',
+    kpiVideos: 'HD studio videos',
     kpiProgress: 'Passed gates',
     nativeBtn: 'Native Go labs (18) ↓',
     readinessBtn: 'Competency map →',
@@ -156,6 +159,7 @@ const labels: Record<Locale, {
     kpiScenarios: '本番シナリオ',
     kpiGates: '品質ゲート',
     kpiSimulators: 'SREシミュレーター',
+    kpiVideos: 'HD解説動画',
     kpiProgress: '達成ゲート',
     nativeBtn: 'リアル Go · 18ラボ ↓',
     readinessBtn: 'スキルマップ →',
@@ -174,6 +178,7 @@ const labels: Record<Locale, {
     kpiScenarios: '生产级场景',
     kpiGates: '质量关卡',
     kpiSimulators: 'SRE 模拟器',
+    kpiVideos: '高清双人视频',
     kpiProgress: '已通过关卡',
     nativeBtn: '原生 Go 实验室 (18) ↓',
     readinessBtn: '能力雷达图 →',
@@ -192,6 +197,7 @@ const labels: Record<Locale, {
     kpiScenarios: 'Cenários reais',
     kpiGates: 'Quality gates',
     kpiSimulators: 'Simuladores SRE',
+    kpiVideos: 'Vídeos estúdio HD',
     kpiProgress: 'Gates concluídos',
     nativeBtn: 'Laboratórios Go nativos (18) ↓',
     readinessBtn: 'Mapa de competências →',
@@ -210,6 +216,7 @@ const labels: Record<Locale, {
     kpiScenarios: 'Scénarios réels',
     kpiGates: 'Quality gates',
     kpiSimulators: 'Simulateurs SRE',
+    kpiVideos: 'Vidéos studio HD',
     kpiProgress: 'Gates validés',
     nativeBtn: 'Laboratoires Go natifs (18) ↓',
     readinessBtn: 'Carte des compétences →',
@@ -283,6 +290,10 @@ export function SeniorDashboard({
             <div class="senior-kpi-item">
               <strong>10</strong>
               <span>{t.kpiSimulators}</span>
+            </div>
+            <div class="senior-kpi-item">
+              <strong>20</strong>
+              <span>{t.kpiVideos}</span>
             </div>
             <div class="senior-kpi-item">
               <strong>{totalPassedGates}/90</strong>

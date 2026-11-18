@@ -1179,6 +1179,381 @@ const SENIOR_MODULE_DECKS: Record<string, CinemaDeck> = {
       },
     ],
   }),
+
+  S14: attachAudio({
+    id: 'SENIOR-S14',
+    kicker: 'BRIEFING S14 · OBSERVABILIDAD P99',
+    heading: 'S14 · Percentiles P95/P99, alta cardinalidad y alertas por SLO',
+    ctaLabel: 'Probar Simulador P99 abajo',
+    ctaHref: '#/senior/S14',
+    scenes: [
+      {
+        chapter: '01 · Media Engañosa',
+        title: 'El promedio en 10ms esconde bloqueos de 3 segundos en el 1%',
+        durationSec: 12,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Caso S14: observabilidad e incidentes. Nuestro panel muestra una latencia promedio excelente de diez milisegundos, pero clientes reales reportan bloqueos de tres segundos en el checkout. ¿Por qué miente el gráfico?',
+        visual: {
+          kind: 'architecture',
+          mode: 'incident',
+          nodes: [
+            { label: 'Promedio Global', sub: '10 ms (verde falso)', state: 'normal' },
+            { label: 'Cola Larga (GC/Locks)', sub: '1% peticiones > 3,000 ms', state: 'hot' },
+            { label: 'Labels UserID', sub: 'Explosión cardinalidad RAM ⚠', state: 'hot' },
+          ],
+          metricLabel: 'Realidad del Checkout',
+          metricBefore: 'Avg 10 ms',
+          metricAfter: 'P99 3,120 ms (SLO roto)',
+        },
+      },
+      {
+        chapter: '02 · Colas Largas',
+        title: 'Evaluar distribución real (P95/P99) junto a throughput y errores',
+        durationSec: 13,
+        mascot: 'debug',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'La media esconde siempre las colas largas: un uno por ciento de peticiones sufriendo pausas de recolector de basura destruye la experiencia aunque el promedio luzca verde. Observa percentiles p95/p99 junto a errores y throughput.',
+        visual: {
+          kind: 'lanes',
+          mode: 'ordered',
+          statusBadge: 'SLO TELEMETRY · ZERO-ALLOC TRACKING',
+          laneA: {
+            name: 'Métricas Acotadas',
+            steps: ['Histograms P50/P95/P99', 'Labels acotados (ruta/status)'],
+          },
+          laneB: {
+            name: 'Trazas + slog',
+            steps: ['Correlación trace_id', 'Alertas por burn rate SLO'],
+          },
+        },
+      },
+      {
+        chapter: '03 · Trazas y SLOs',
+        title: 'Evitar cardinalidad explosiva y probar percentiles extremos',
+        durationSec: 13,
+        mascot: 'graduate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Correlaciona logs y trazas con context, evita etiquetas con cardinalidad explosiva como IDs de usuario, diseña alertas basadas en SLO y prueba el cálculo exacto de percentiles con go test -race.',
+        visual: {
+          kind: 'terminal',
+          title: 's14-percentiles · tail distribution',
+          lines: [
+            { prompt: '$', text: 'go test -race ./s14-percentiles', tone: 'cmd' },
+            { text: 'Empty, unordered & heavy-tail inputs tested', tone: 'ok' },
+            { text: 'P50=11ms | P95=48ms | P99=310ms (alert threshold)', tone: 'warn' },
+            { text: 'PASS · Cálculo determinista de distribución', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  S15: attachAudio({
+    id: 'SENIOR-S15',
+    kicker: 'BRIEFING S15 · ZERO DOWNTIME',
+    heading: 'S15 · Readiness probe y drenado ordenado con Server.Shutdown',
+    ctaLabel: 'Probar Simulador Shutdown abajo',
+    ctaHref: '#/senior/S15',
+    scenes: [
+      {
+        chapter: '01 · Cortes 502',
+        title: 'Cerrar conexiones o canales en caliente provoca panic y 502',
+        durationSec: 12,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Caso S15: despliegue y operaciones. Cada vez que subimos una nueva versión a producción caen conexiones activas con error 502 o surgen panic al cerrar canales mientras aún llegan peticiones.',
+        visual: {
+          kind: 'architecture',
+          mode: 'incident',
+          nodes: [
+            { label: 'Load Balancer', sub: 'Sigue enviando tráfico', state: 'hot' },
+            { label: 'SIGKILL / close()', sub: 'Cierra canal con productores', state: 'hot' },
+            { label: 'Clientes Activos', sub: 'HTTP 502 / send on closed ⚠', state: 'hot' },
+          ],
+          metricLabel: 'Durante Rolling Deploy',
+          metricBefore: 'Abrupto',
+          metricAfter: '0 errores 502 con drenado ordenado',
+        },
+      },
+      {
+        chapter: '02 · Orden Sagrado',
+        title: 'Readiness false -> parar productores -> drenar con deadline',
+        durationSec: 12,
+        mascot: 'architecture',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'El orden del apagado es sagrado: primero marca readiness como falso para sacar la instancia del balanceador, detén a los productores y drena los trabajos en curso dentro de un grace period acotado.',
+        visual: {
+          kind: 'lanes',
+          mode: 'ordered',
+          statusBadge: 'GRACEFUL SHUTDOWN SEQUENCE',
+          laneA: {
+            name: '1. Corte Ingress',
+            steps: ['SIGTERM recibido', '/readyz -> 503', 'Server.Shutdown(ctx)'],
+          },
+          laneB: {
+            name: '2. Cierre Seguro',
+            steps: ['Productores paran', 'Drain in-flight <= 10s', 'close(ch) único dueño'],
+          },
+        },
+      },
+      {
+        chapter: '03 · Zero Leaks',
+        title: 'Validar apagado doble, cancelación y rollback reversible',
+        durationSec: 11,
+        mascot: 'senior',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Solo el dueño del canal puede cerrarlo cuando nadie más envía; valida apagado doble, cancelación y cero goroutines huérfanas con go test -race, y documenta tu rollback reversible.',
+        visual: {
+          kind: 'terminal',
+          title: 's15-shutdown · zero-downtime check',
+          lines: [
+            { prompt: '$', text: 'go test -race ./s15-shutdown', tone: 'cmd' },
+            { text: 'ok   double Shutdown() idempotent -> nil panic', tone: 'ok' },
+            { text: 'ok   in-flight drained cleanly within timeout', tone: 'ok' },
+            { text: 'PASS · 0 dropped connections · Rollback listo', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  S16: attachAudio({
+    id: 'SENIOR-S16',
+    kicker: 'BRIEFING S16 · MIGRACIONES SEGURAS',
+    heading: 'S16 · Contratos retrocompatibles con Expand-and-Contract',
+    ctaLabel: 'Abrir Decision Lab (G1)',
+    ctaHref: '#/senior/S16/decision-lab',
+    scenes: [
+      {
+        chapter: '01 · Ruptura en Vivo',
+        title: 'Renombrar campos JSON/SQL de golpe rompe apps móviles activas',
+        durationSec: 12,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Caso S16: migraciones y mantenimiento. Renombramos un campo del JSON y una columna SQL en el mismo despliegue; al instante fallaron las aplicaciones móviles con la versión anterior. ¿Cómo evolucionamos sin romper?',
+        visual: {
+          kind: 'architecture',
+          mode: 'incident',
+          nodes: [
+            { label: 'App v1 (Legacy)', sub: 'Envía total_cents', state: 'normal' },
+            { label: 'Backend v2 Rígido', sub: 'Exige amount solamente', state: 'hot' },
+            { label: 'Contratos rotos', sub: 'HTTP 400 masivos en prod ⚠', state: 'hot' },
+          ],
+          metricLabel: 'Impacto en clientes',
+          metricBefore: 'Big-Bang Deploy',
+          metricAfter: 'Coexistencia dual sin cortes',
+        },
+      },
+      {
+        chapter: '02 · Expand-Contract',
+        title: 'Ventana de coexistencia leyendo y escribiendo ambos esquemas',
+        durationSec: 11,
+        mascot: 'building',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Aplica el patrón expand-and-contract: primero despliega soporte dual aceptando formatos antiguos y nuevos durante una ventana de coexistencia segura, antes de retirar campos heredados.',
+        visual: {
+          kind: 'code-diff',
+          file: 's16-compatibility/payload.go',
+          before: [
+            'type OrderV2 struct { Amount int64 `json:"amount"` }',
+          ],
+          after: [
+            'type OrderCompat struct {',
+            '  Amount      int64  `json:"amount"`',
+            '  TotalLegacy *int64 `json:"total_cents,omitempty"`',
+            '}',
+          ],
+          callout: 'Fase Expand: acepta v1+v2. Solo contrae cuando tráfico v1 == 0%.',
+        },
+      },
+      {
+        chapter: '03 · Pruebas Históricas',
+        title: 'Probar payloads v1/v2 y medir adopción antes de contraer',
+        durationSec: 12,
+        mascot: 'coding',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Versiona esquemas, prueba tanto cargas históricas como campos desconocidos ejecutando go test -race y define métricas de adopción junto con un plan de rollback antes de contraer el contrato.',
+        visual: {
+          kind: 'terminal',
+          title: 's16-compatibility · schema evolution',
+          lines: [
+            { prompt: '$', text: 'go test -race ./s16-compatibility', tone: 'cmd' },
+            { text: 'v1 JSON {"total_cents": 500} -> mapped safely ✓', tone: 'ok' },
+            { text: 'v2 JSON {"amount": 500}      -> mapped safely ✓', tone: 'ok' },
+            { text: 'PASS · Dual window + rollback verificado', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  S17: attachAudio({
+    id: 'SENIOR-S17',
+    kicker: 'BRIEFING S17 · LIDERAZGO TÉCNICO',
+    heading: 'S17 · Code Reviews con evidencia, severidad y ADRs claros',
+    ctaLabel: 'Abrir Decision Lab (G1)',
+    ctaHref: '#/senior/S17/decision-lab',
+    scenes: [
+      {
+        chapter: '01 · Nitpicking vs Riesgo',
+        title: 'No discutas formato menor mientras pasa un riesgo crítico de sistema',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Caso S17: liderazgo técnico. Frente a un Pull Request enorme o un RFC complejo, es fácil enredarse discutiendo estilos menores y dejar pasar un riesgo grave de concurrencia o seguridad.',
+        visual: {
+          kind: 'lanes',
+          mode: 'deadlock',
+          statusBadge: 'ANTI-PATRÓN DE REVISIÓN',
+          laneA: {
+            name: 'Review superficial',
+            steps: ['"Esto está mal"', '"Prefiero otro nombre"', 'Aprueba con data race oculto ⚠'],
+          },
+          laneB: {
+            name: 'Review Senior',
+            steps: ['Correctitud primero', 'Seguridad e invariantes', 'Evidencia reproducible ✓'],
+          },
+        },
+      },
+      {
+        chapter: '02 · Matriz Severidad',
+        title: 'Priorizar por Probabilidad × Impacto sobre corrección y seguridad',
+        durationSec: 11,
+        mascot: 'reading',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Una revisión Senior evalúa primero corrección, invariantes y seguridad, nunca opiniones subjetivas sin respaldo. Prioriza cada hallazgo multiplicando su probabilidad por su impacto real.',
+        visual: {
+          kind: 'architecture',
+          mode: 'mitigated',
+          nodes: [
+            { label: 'P0 · Bloqueante', sub: 'Data race / IDOR / OOM', state: 'hot' },
+            { label: 'P1 · Diseño', sub: 'Acoplamiento / Sin rollback', state: 'normal' },
+            { label: 'P2 · Nit', sub: 'Estilo (no bloquea PR)', state: 'ok' },
+          ],
+          metricLabel: 'Criterio de priorización',
+          metricBefore: 'Subjetivo',
+          metricAfter: 'Severidad = Probabilidad × Impacto',
+        },
+      },
+      {
+        chapter: '03 · Evidencia y ADR',
+        title: 'Enlazar test que reproduce el fallo y documentar el porqué',
+        durationSec: 12,
+        mascot: 'senior',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Evita comentarios vagos: enlaza la prueba concreta que reproduce el riesgo, propón una alternativa medible en go test -race y preserva siempre el porqué de las decisiones en tus ADRs.',
+        visual: {
+          kind: 'terminal',
+          title: 's17-review-priority · RFC & ADR ranking',
+          lines: [
+            { prompt: '$', text: 'go test -race ./s17-review-priority', tone: 'cmd' },
+            { text: 'Ranked #1 [CRITICAL]: unauthenticated mutation', tone: 'warn' },
+            { text: 'Ranked #2 [HIGH]: missing backoff budget', tone: 'ok' },
+            { text: 'PASS · Evidencia reproducible + ADR preservado', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  S18: attachAudio({
+    id: 'SENIOR-S18',
+    kicker: 'BRIEFING S18 · SYSTEM DESIGN FINAL',
+    heading: 'S18 · Capacidad, Ley de Little, backpressure y Capstone Senior',
+    ctaLabel: 'Probar Simulador Capacidad abajo',
+    ctaHref: '#/senior/S18',
+    scenes: [
+      {
+        chapter: '01 · Mito 10k Workers',
+        title: 'Escalar workers sin proteger dependencias colapsa el P99',
+        durationSec: 12,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Caso S18: examen final de System Design. Debemos diseñar una plataforma distribuida de trabajos bajo picos intensos. La tentación rápida es subir workers a diez mil y esperar lo mejor, ¿cierto?',
+        visual: {
+          kind: 'architecture',
+          mode: 'incident',
+          nodes: [
+            { label: 'Ráfaga Entrada', sub: '500 jobs/seg', state: 'normal' },
+            { label: '10,000 Workers', sub: 'Sin límite ni backpressure', state: 'hot' },
+            { label: 'DB & Downstream', sub: 'Contención extrema · P99 x20 ⚠', state: 'hot' },
+          ],
+          metricLabel: 'Estabilidad del sistema',
+          metricBefore: 'Sobrecarga por workers',
+          metricAfter: 'Ley de Little + rechazo temprano',
+        },
+      },
+      {
+        chapter: '02 · Ley de Little',
+        title: 'Estimar concurrencia necesaria: L = λ · W y margen de utilización',
+        durationSec: 12,
+        mascot: 'senior',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Subir workers sin proteger las dependencias aguas abajo solo multiplica la contención y empeora el P99. Dimensiona concurrencia con la Ley de Little multiplicando tasa de llegada por latencia y utilización objetivo.',
+        visual: {
+          kind: 'code-diff',
+          file: 's18-capacity/model.go',
+          before: [
+            'workers := 10000 // número arbitrario sin medir latencia',
+          ],
+          after: [
+            '// Ley de Little: concurrencia = llegadas/s × latencia(s)',
+            'required := int(math.Ceil((arrivalRate * latencySec) / targetUtil))',
+          ],
+          callout: 'Acota colas y rechaza rápido (429) antes de saturar la base de datos.',
+        },
+      },
+      {
+        chapter: '03 · Graduación Senior',
+        title: 'Probar saturación con go test -race y conquistar el Capstone Go',
+        durationSec: 12,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Aclara restricciones antes de dibujar cajas, diseña etapas incrementales con backpressure explícito, prueba tasas extremas de saturación con go test -race y completa ahora tu Capstone Senior.',
+        visual: {
+          kind: 'terminal',
+          title: 's18-capacity · 18/18 Senior Labs Complete',
+          lines: [
+            { prompt: '$', text: 'cd labs-native && go test -race ./...', tone: 'cmd' },
+            { text: 'ok   s18-capacity  -> zero overflow · 429 shedding clean', tone: 'ok' },
+            { text: '18 / 18 Senior Modules + Capstone Go verified', tone: 'ok' },
+            { text: 'PASS · ¡Listo para Ingeniería Go Senior en Producción!', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
 };
 
 export function getSeniorCinemaDeck(moduleId: string): CinemaDeck | undefined {
