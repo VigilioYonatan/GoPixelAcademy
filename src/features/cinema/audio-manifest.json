@@ -560,5 +560,75 @@
       "gopher",
       "gopher"
     ]
+  },
+  "LESSON-I06": {
+    "src": "audio/lesson-i06.mp3",
+    "totalSec": 41.41,
+    "cues": [
+      0.45,
+      14.91,
+      28.54
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "LESSON-I07": {
+    "src": "audio/lesson-i07.mp3",
+    "totalSec": 37.63,
+    "cues": [
+      0.45,
+      12.84,
+      24.02
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "LESSON-I08": {
+    "src": "audio/lesson-i08.mp3",
+    "totalSec": 37.69,
+    "cues": [
+      0.45,
+      13.84,
+      25.68
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "LESSON-I09": {
+    "src": "audio/lesson-i09.mp3",
+    "totalSec": 40.47,
+    "cues": [
+      0.45,
+      15.72,
+      27.46
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "LESSON-I10": {
+    "src": "audio/lesson-i10.mp3",
+    "totalSec": 37.4,
+    "cues": [
+      0.45,
+      11.78,
+      25.35
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
   }
 }

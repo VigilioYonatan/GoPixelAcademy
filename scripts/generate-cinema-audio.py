@@ -161,6 +161,27 @@ def clean_for_speech(text: str) -> str:
         ("I03", "i cero tres"),
         ("I04", "i cero cuatro"),
         ("I05", "i cero cinco"),
+        ("I06", "i cero seis"),
+        ("I07", "i cero siete"),
+        ("I08", "i cero ocho"),
+        ("I09", "i cero nueve"),
+        ("I10", "i diez"),
+        ("json.Marshal", "jason punto Marshal"),
+        ("http.DefaultClient", "http punto Default Client"),
+        ("http.Client", "http punto Client"),
+        ("http.Get()", "http punto Get"),
+        ("http.ResponseWriter", "http punto Response Writer"),
+        ("*http.Request", "puntero a http punto Request"),
+        ("WriteHeader", "Write Header"),
+        ("http.StatusOK", "http punto Status O K"),
+        ("/health", "barra health"),
+        ("Row.Scan", "Row punto Scan"),
+        ("reg.Scan(&nombre)", "reg punto Scan pasando dirección de nombre"),
+        ("testing.T", "testing punto T"),
+        ("TestMultiplicar(t *testing.T)", "Test Multiplicar recibiendo te puntero a testing punto T"),
+        ("t.Errorf", "te punto Error efe"),
+        ("encoding/json", "encoding barra json"),
+        ("database/sql", "database barra sql"),
         ("ErrNotFound", "error Not Found"),
         ("bufio.NewScanner", "bufio punto New Scanner"),
         ("scanner.Scan()", "scanner punto Scan"),
@@ -1345,8 +1366,125 @@ def build_batch_8_scripts() -> dict[str, tuple[str, list[dict]]]:
     return decks
 
 
+def build_batch_9_scripts() -> dict[str, tuple[str, list[dict]]]:
+    """Next 5 Intermediate track capsules: LESSON-I06, I07, I08, I09, I10."""
+    decks: dict[str, tuple[str, list[dict]]] = {}
+
+    # 41. LESSON-I06 (JSON y struct tags)
+    decks["LESSON-I06"] = (
+        "lesson-i06.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección I06: JSON y serialización. En Go escribimos campos de struct con mayúscula inicial como Host y Puerto, pero nuestras APIs esperan claves en minúscula como host y puerto. Además, ¿por qué un campo minúscula desaparece del JSON generado?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Porque el paquete encoding/json usa reflexión en tiempo de ejecución y solo ve campos exportados que empiecen con mayúscula. Añade struct tags con comillas invertidas indicando la clave exacta y opciones como omit empty cuando quieras omitir valores vacíos.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Para streaming HTTP de payloads grandes prefiere json punto New Encoder sobre Write, o valida campos desconocidos como hicimos en el Capstone. Agrega los tags a Servidor y serializa con json.Marshal en I06.",
+            },
+        ],
+    )
+
+    # 42. LESSON-I07 (HTTP Client con Timeout explícito)
+    decks["LESSON-I07"] = (
+        "lesson-i07.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección I07: clientes HTTP. Llamar directamente a http.Get() parece súper cómodo en ejemplos rápidos, ¿pero qué trampa mortal esconde cuando un microservicio externo se queda colgado sin responder?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "http.DefaultClient tiene un timeout infinito por defecto: cada petición lenta retiene sockets abiertos y goroutines bloqueadas indefinidamente hasta agotar la memoria o los descriptores del sistema.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Construye siempre un http.Client explícito con Timeout acotado más propagación de context, base directa de S05 y S11 en Senior Mode. Configura cinco segundos en crearClienteSeguro para superar I07.",
+            },
+        ],
+    )
+
+    # 43. LESSON-I08 (APIs REST, http.ResponseWriter y orden de cabeceras)
+    decks["LESSON-I08"] = (
+        "lesson-i08.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección I08: APIs REST con stdlib. Muchos desarrolladores se sorprenden al ver que su cabecera Content-Type es ignorada o devuelve 200 OK cuando querían enviar un código de estado distinto. ¿Por qué importa el orden dentro de un handler?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Un handler recibe http.ResponseWriter y *http.Request: en cuanto llamas a WriteHeader o escribes el primer byte del cuerpo, Go despacha los encabezados por la red y ya no puedes modificarlos después.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Fija primero las cabeceras JSON, luego llama a WriteHeader con http.StatusOK y finalmente escribe el cuerpo. Implementa así el endpoint /health de Saludador para completar I08.",
+            },
+        ],
+    )
+
+    # 44. LESSON-I09 (SQL y persistencia con Row.Scan(&var))
+    decks["LESSON-I09"] = (
+        "lesson-i09.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección I09: SQL y persistencia. Cuando conectamos Go a Postgres o SQLite, database/sql no exige un ORM gigante ni reflexión mágica para leer una consulta. ¿Cómo traslada las columnas directamente a nuestras variables?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "A través de punteros con Row.Scan: pasas las direcciones exactas en el mismo orden de las columnas SELECT evitando conversiones frágiles y cerrando siempre filas con defer rows punto Close para liberar conexiones del pool.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Y regla de oro de seguridad desde S12: usa marcadores parametrizados como dólar uno o signo de interrogación en lugar de concatenar strings SQL. Completa reg.Scan(&nombre) en I09.",
+            },
+        ],
+    )
+
+    # 45. LESSON-I10 (Testing nativo con *testing.T y table-driven tests)
+    decks["LESSON-I10"] = (
+        "lesson-i10.mp3",
+        [
+            {
+                "speaker": "host",
+                "rate": "+5%",
+                "spoken": "Lección I10: testing en Go. Quien viene de otros ecosistemas busca librerías externas con sintaxis tipo should-equal o expect. ¿Por qué la comunidad Go prefiere usar únicamente la librería estándar testing?",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Con archivos terminados en guion bajo test punto go y testing.T tienes pruebas rápidas integradas en la herramienta go test, reportando fallos claros con t.Errorf y ejecutando decenas de casos limpios mediante slices de table-driven.",
+            },
+            {
+                "speaker": "gopher",
+                "rate": "+4%",
+                "spoken": "Además go test escala directamente a benchmarks de asignaciones y detector de carreras con guion race en Senior Mode. Escribe TestMultiplicar(t *testing.T) validando Multiplicar en I10.",
+            },
+        ],
+    )
+
+    return decks
+
+
 async def main() -> None:
-    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch8"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--batch9"
     AUDIO_OUT_DIR.mkdir(parents=True, exist_ok=True)
     if mode == "--all":
         decks = {
@@ -1358,6 +1496,7 @@ async def main() -> None:
             **build_batch_6_scripts(),
             **build_batch_7_scripts(),
             **build_batch_8_scripts(),
+            **build_batch_9_scripts(),
         }
     elif mode == "--batch1":
         decks = build_batch_1_scripts()
@@ -1373,8 +1512,10 @@ async def main() -> None:
         decks = build_batch_6_scripts()
     elif mode == "--batch7":
         decks = build_batch_7_scripts()
-    else:
+    elif mode == "--batch8":
         decks = build_batch_8_scripts()
+    else:
+        decks = build_batch_9_scripts()
     print(f"🎙️ Generando {len(decks)} pistas de audio neuronal HD + mastering de estudio con {FFMPEG}...")
     sem = asyncio.Semaphore(5)
 

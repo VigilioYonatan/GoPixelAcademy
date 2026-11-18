@@ -51,7 +51,18 @@ export function cleanForSpeech(text: string): string {
     .replace(/comma-ok/g, 'coma ok')
     .replace(/bufio\.NewScanner/g, 'bufio punto New Scanner')
     .replace(/scanner\.Scan\(\)/g, 'scanner punto Scan')
-    .replace(/ErrNotFound/g, 'error Not Found');
+    .replace(/ErrNotFound/g, 'error Not Found')
+    .replace(/json\.Marshal/g, 'jason punto Marshal')
+    .replace(/encoding\/json/g, 'encoding barra json')
+    .replace(/http\.DefaultClient/g, 'http punto Default Client')
+    .replace(/http\.Client/g, 'http punto Client')
+    .replace(/http\.ResponseWriter/g, 'http punto Response Writer')
+    .replace(/\*http\.Request/g, 'puntero http punto Request')
+    .replace(/http\.StatusOK/g, 'http punto Status O K')
+    .replace(/database\/sql/g, 'database barra sql')
+    .replace(/Row\.Scan/g, 'Row punto Scan')
+    .replace(/testing\.T/g, 'testing punto T')
+    .replace(/t\.Errorf/g, 'te punto Error efe');
 }
 
 export function isSpeechSupported(): boolean {

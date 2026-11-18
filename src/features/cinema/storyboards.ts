@@ -2992,6 +2992,382 @@ const LESSON_ANCHOR_DECKS: Record<string, CinemaDeck> = {
       },
     ],
   }),
+
+  I06: attachAudio({
+    id: 'LESSON-I06',
+    kicker: 'INTERMEDIO GO · LECCIÓN I06',
+    heading: 'JSON en Go: campos exportados, struct tags y json.Marshal',
+    ctaLabel: 'Serializar Servidor con tags JSON',
+    ctaHref: '#/lesson/I06',
+    scenes: [
+      {
+        chapter: '01 · Visibilidad JSON',
+        title: '¿Por qué campos en minúscula desaparecen y cómo renombrar claves?',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'gold',
+        speaker: 'host',
+        speech:
+          'Lección I06: JSON y serialización. En Go escribimos campos de struct con mayúscula inicial como Host y Puerto, pero nuestras APIs esperan claves en minúscula como host y puerto. Además, ¿por qué un campo minúscula desaparece del JSON generado?',
+        visual: {
+          kind: 'code-diff',
+          file: 'config.go',
+          before: [
+            'type Servidor struct { host string } // minúscula: ignorado por encoding/json',
+          ],
+          after: [
+            'type Servidor struct {',
+            '    Host   string `json:"host"`',
+            '    Puerto int    `json:"puerto"`',
+            '}',
+          ],
+          callout: 'Mayúscula para exportar al encoder + struct tag para clave JSON exacta.',
+        },
+      },
+      {
+        chapter: '02 · Reflexión Segura',
+        title: 'Struct tags tipados con backticks y opciones omitempty',
+        durationSec: 11,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Porque el paquete encoding/json usa reflexión en tiempo de ejecución y solo ve campos exportados que empiecen con mayúscula. Añade struct tags con comillas invertidas indicando la clave exacta y opciones como omit empty cuando quieras omitir valores vacíos.',
+        visual: {
+          kind: 'stack-heap',
+          mode: 'solution',
+          stackLabel: 'Go Struct Tipado',
+          stackItems: [
+            { name: 'Host string', value: '`json:"host"`', state: 'ok' },
+            { name: 'Puerto int', value: '`json:"puerto"`', state: 'ok' },
+          ],
+          heapLabel: 'Payload Wire JSON',
+          heapItems: [
+            { addr: 'MARSHAL', data: '{"host":"localhost","puerto":8080}', note: 'Contrato limpio API REST' },
+          ],
+        },
+      },
+      {
+        chapter: '03 · Práctica I06',
+        title: 'Anota Servidor con struct tags y ejecuta json.Marshal',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Para streaming HTTP de payloads grandes prefiere json punto New Encoder sobre Write, o valida campos desconocidos como hicimos en el Capstone. Agrega los tags a Servidor y serializa con json.Marshal en I06.',
+        visual: {
+          kind: 'terminal',
+          title: 'i06-json · encoding/json',
+          lines: [
+            { prompt: '$', text: 'datos, _ := json.Marshal(srv)', tone: 'cmd' },
+            { text: 'JSON generado: {"host":"localhost","puerto":8080}', tone: 'ok' },
+            { text: 'PASS · Struct tags y serialización verificadas', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  I07: attachAudio({
+    id: 'LESSON-I07',
+    kicker: 'INTERMEDIO GO · LECCIÓN I07',
+    heading: 'HTTP Client seguro: jamás dependas de http.DefaultClient sin Timeout',
+    ctaLabel: 'Configurar Timeout de 5s abajo',
+    ctaHref: '#/lesson/I07',
+    scenes: [
+      {
+        chapter: '01 · Fuga Silenciosa',
+        title: 'http.Get() usa Timeout = 0 (espera infinita) bajo fallos de red',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'ember',
+        speaker: 'host',
+        speech:
+          'Lección I07: clientes HTTP. Llamar directamente a http.Get() parece súper cómodo en ejemplos rápidos, ¿pero qué trampa mortal esconde cuando un microservicio externo se queda colgado sin responder?',
+        visual: {
+          kind: 'architecture',
+          mode: 'incident',
+          nodes: [
+            { label: 'http.Get()', sub: 'DefaultClient (Timeout = 0)', state: 'hot' },
+            { label: 'Upstream Lento', sub: 'Nunca responde ni cierra TCP', state: 'hot' },
+            { label: 'Sockets / Goroutines', sub: 'Agotamiento de FD y RAM', state: 'hot' },
+          ],
+          metricLabel: 'Impacto en producción sin Timeout',
+          metricBefore: 'Cuelgue indefinido de workers',
+          metricAfter: 'Acotado en 5 * time.Second ✓',
+        },
+      },
+      {
+        chapter: '02 · Cliente Acotado',
+        title: 'Instanciar &http.Client{ Timeout: ... } + context.WithTimeout',
+        durationSec: 11,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'http.DefaultClient tiene un timeout infinito por defecto: cada petición lenta retiene sockets abiertos y goroutines bloqueadas indefinidamente hasta agotar la memoria o los descriptores del sistema.',
+        visual: {
+          kind: 'code-diff',
+          file: 'http_client.go',
+          before: [
+            'resp, err := http.Get(url) // Timeout: 0 (infinito peligroso)',
+          ],
+          after: [
+            'client := &http.Client{',
+            '    Timeout: 5 * time.Second,',
+            '}',
+          ],
+          callout: 'Un *http.Client reutiliza pool keep-alive seguro con límite estricto.',
+        },
+      },
+      {
+        chapter: '03 · Práctica I07',
+        title: 'Construye crearClienteSeguro con Timeout: 5 * time.Second',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Construye siempre un http.Client explícito con Timeout acotado más propagación de context, base directa de S05 y S11 en Senior Mode. Configura cinco segundos en crearClienteSeguro para superar I07.',
+        visual: {
+          kind: 'terminal',
+          title: 'i07-http-client · cliente resiliente',
+          lines: [
+            { prompt: '$', text: 'c := crearClienteSeguro()', tone: 'cmd' },
+            { text: 'Cliente HTTP creado con Timeout seguro: 5s', tone: 'ok' },
+            { text: 'PASS · Puente directo a resiliencia S11', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  I08: attachAudio({
+    id: 'LESSON-I08',
+    kicker: 'INTERMEDIO GO · LECCIÓN I08',
+    heading: 'APIs REST en stdlib: orden exacto de Headers, WriteHeader y Body',
+    ctaLabel: 'Implementar handler /health',
+    ctaHref: '#/lesson/I08',
+    scenes: [
+      {
+        chapter: '01 · Orden de Envío',
+        title: '¿Por qué fijar headers después de Write() no surte efecto?',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'cyan',
+        speaker: 'host',
+        speech:
+          'Lección I08: APIs REST con stdlib. Muchos desarrolladores se sorprenden al ver que su cabecera Content-Type es ignorada o devuelve 200 OK cuando querían enviar un código de estado distinto. ¿Por qué importa el orden dentro de un handler?',
+        visual: {
+          kind: 'code-diff',
+          file: 'health_handler.go',
+          before: [
+            'w.Write([]byte(`{"status":"online"}`)) // envía 200 implícito antes!',
+            'w.Header().Set("Content-Type", "application/json") // demasiado tarde',
+          ],
+          after: [
+            'w.Header().Set("Content-Type", "application/json")',
+            'w.WriteHeader(http.StatusOK)',
+            'w.Write([]byte(`{"status":"online"}`))',
+          ],
+          callout: 'Orden sagrado en ResponseWriter: 1) Headers, 2) WriteHeader, 3) Write.',
+        },
+      },
+      {
+        chapter: '02 · Contrato Estándar',
+        title: 'Firma http.HandlerFunc compatible con stdlib, Chi y middlewares',
+        durationSec: 11,
+        mascot: 'architecture',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Un handler recibe http.ResponseWriter y *http.Request: en cuanto llamas a WriteHeader o escribes el primer byte del cuerpo, Go despacha los encabezados por la red y ya no puedes modificarlos después.',
+        visual: {
+          kind: 'lanes',
+          mode: 'ordered',
+          laneA: {
+            name: 'Flujo de ResponseWriter',
+            steps: ['1. w.Header().Set(...)', '2. w.WriteHeader(http.StatusOK)', '3. w.Write(jsonBytes)'],
+          },
+          laneB: {
+            name: 'Contrato Universal',
+            steps: ['*http.Request entrante', 'Compatible net/http y Chi'],
+          },
+          statusBadge: 'HTTP LIMPIO · Encabezados enviados en el orden correcto',
+        },
+      },
+      {
+        chapter: '03 · Práctica I08',
+        title: 'Completa el handler Saludador en /health devolviendo JSON 200 OK',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Fija primero las cabeceras JSON, luego llama a WriteHeader con http.StatusOK y finalmente escribe el cuerpo. Implementa así el endpoint /health de Saludador para completar I08.',
+        visual: {
+          kind: 'terminal',
+          title: 'i08-rest-api · /health',
+          lines: [
+            { prompt: '$', text: 'http.HandleFunc("/health", Saludador)', tone: 'cmd' },
+            { text: 'HTTP/1.1 200 OK · Content-Type: application/json', tone: 'ok' },
+            { text: 'PASS · Handler idiomático stdlib listo', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  I09: attachAudio({
+    id: 'LESSON-I09',
+    kicker: 'INTERMEDIO GO · LECCIÓN I09',
+    heading: 'SQL en Go: Row.Scan(&var), consultas parametrizadas y pool seguro',
+    ctaLabel: 'Escanear columna en &nombre',
+    ctaHref: '#/lesson/I09',
+    scenes: [
+      {
+        chapter: '01 · Sin ORM Pesado',
+        title: 'database/sql escanea filas tipadas directo a direcciones &var',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'violet',
+        speaker: 'host',
+        speech:
+          'Lección I09: SQL y persistencia. Cuando conectamos Go a Postgres o SQLite, database/sql no exige un ORM gigante ni reflexión mágica para leer una consulta. ¿Cómo traslada las columnas directamente a nuestras variables?',
+        visual: {
+          kind: 'code-diff',
+          file: 'user_repo.go',
+          before: [
+            'err := reg.Scan(nombre) // copia por valor: no escribe la variable!',
+          ],
+          after: [
+            'var nombre string',
+            'err := reg.Scan(&nombre) // puntero recibe el valor SQL',
+          ],
+          callout: 'Scan necesita la dirección (&nombre) para escribir cada columna.',
+        },
+      },
+      {
+        chapter: '02 · Pool y Seguridad SQL',
+        title: 'Mapeo por referencia, defer rows.Close() y placeholders $1',
+        durationSec: 11,
+        mascot: 'coding',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'A través de punteros con Row.Scan: pasas las direcciones exactas en el mismo orden de las columnas SELECT evitando conversiones frágiles y cerrando siempre filas con defer rows punto Close para liberar conexiones del pool.',
+        visual: {
+          kind: 'architecture',
+          mode: 'mitigated',
+          nodes: [
+            { label: 'Query $1', sub: 'Placeholder parametrizado seguro', state: 'ok' },
+            { label: 'Row.Scan(&nombre)', sub: 'Escritura directa sin reflexión pesada', state: 'ok' },
+            { label: 'defer Close()', sub: 'Devuelve conexión al pool SQL', state: 'ok' },
+          ],
+          metricLabel: 'Seguridad y Pool SQL',
+          metricBefore: 'SQL Injection o fugas de conexiones',
+          metricAfter: 'Consultas parametrizadas + pool sano ✓',
+        },
+      },
+      {
+        chapter: '03 · Práctica I09',
+        title: 'Usa reg.Scan(&nombre) en ConsultarUsuario para superar I09',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Y regla de oro de seguridad desde S12: usa marcadores parametrizados como dólar uno o signo de interrogación en lugar de concatenar strings SQL. Completa reg.Scan(&nombre) en I09.',
+        visual: {
+          kind: 'terminal',
+          title: 'i09-sql · database/sql pattern',
+          lines: [
+            { prompt: '$', text: 'err := reg.Scan(&nombre)', tone: 'cmd' },
+            { text: 'Usuario escaneado: gopher_master', tone: 'ok' },
+            { text: 'PASS · Patrón Row.Scan y puente a S12 verificados', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
+
+  I10: attachAudio({
+    id: 'LESSON-I10',
+    kicker: 'INTERMEDIO GO · LECCIÓN I10',
+    heading: 'Testing idiomático con *testing.T, t.Errorf y table-driven tests',
+    ctaLabel: 'Completar TestMultiplicar abajo',
+    ctaHref: '#/lesson/I10',
+    scenes: [
+      {
+        chapter: '01 · Filosofía Stdlib',
+        title: 'Sin DSL mágicos: Go incluye testing.T, benchmarks y -race nativos',
+        durationSec: 11,
+        mascot: 'question',
+        aura: 'gold',
+        speaker: 'host',
+        speech:
+          'Lección I10: testing en Go. Quien viene de otros ecosistemas busca librerías externas con sintaxis tipo should-equal o expect. ¿Por qué la comunidad Go prefiere usar únicamente la librería estándar testing?',
+        visual: {
+          kind: 'code-diff',
+          file: 'math_test.go',
+          before: [
+            '// Sin archivos *_test.go las pruebas no compilan aisladas ni miden cobertura',
+          ],
+          after: [
+            'func TestMultiplicar(t *testing.T) {',
+            '    if got := Multiplicar(3, 4); got != 12 {',
+            '        t.Errorf("got %d, want 12", got)',
+            '    }',
+            '}',
+          ],
+          callout: 'go test excluye archivos *_test.go del binario final de producción.',
+        },
+      },
+      {
+        chapter: '02 · Table-Driven Tests',
+        title: 'Una sola función recorre múltiples casos con contexto legible',
+        durationSec: 11,
+        mascot: 'reading',
+        aura: 'cyan',
+        speaker: 'gopher',
+        speech:
+          'Con archivos terminados en guion bajo test punto go y testing.T tienes pruebas rápidas integradas en la herramienta go test, reportando fallos claros con t.Errorf y ejecutando decenas de casos limpios mediante slices de table-driven.',
+        visual: {
+          kind: 'lanes',
+          mode: 'ordered',
+          laneA: {
+            name: 'Anatomía de go test',
+            steps: ['Prefijo Test*(t *testing.T)', 't.Errorf falla sin abortar otros subtests'],
+          },
+          laneB: {
+            name: 'Table-Driven + -race',
+            steps: ['cases := []struct{ in, want }', 'Base de todos los labs Senior'],
+          },
+          statusBadge: 'NATIVO GO · Unit, Fuzz, Benchmark y Race Detector',
+        },
+      },
+      {
+        chapter: '03 · Práctica I10',
+        title: 'Implementa TestMultiplicar(t *testing.T) reportando con t.Errorf',
+        durationSec: 11,
+        mascot: 'celebrate',
+        aura: 'gold',
+        speaker: 'gopher',
+        speech:
+          'Además go test escala directamente a benchmarks de asignaciones y detector de carreras con guion race en Senior Mode. Escribe TestMultiplicar(t *testing.T) validando Multiplicar en I10.',
+        visual: {
+          kind: 'terminal',
+          title: 'i10-testing · go test -v',
+          lines: [
+            { prompt: '$', text: 'go test -v ./...', tone: 'cmd' },
+            { text: '=== RUN   TestMultiplicar', tone: 'muted' },
+            { text: '--- PASS: TestMultiplicar (0.00s)', tone: 'ok' },
+          ],
+        },
+      },
+    ],
+  }),
 };
 
 export function getLessonCinemaDeck(lessonId: string): CinemaDeck | undefined {

@@ -8,7 +8,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const manifestPath = resolve(root, 'src/features/cinema/audio-manifest.json');
 const curriculumPath = resolve(root, 'src/data/curriculum.json');
 
-test('gopher cinema audio manifest covers 100% of Senior Mode (S01-S18 + Capstone), 100% Basic (B01-B12), I01-I05, A01 & Frameworks (40 studio tracks)', () => {
+test('gopher cinema audio manifest covers 100% of Senior Mode (S01-S18 + Capstone), 100% Basic (B01-B12), I01-I10, A01 & Frameworks (45 studio tracks)', () => {
   assert.ok(existsSync(manifestPath), 'audio-manifest.json must exist');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
   const seniorModules = JSON.parse(readFileSync(curriculumPath, 'utf8'))
@@ -38,6 +38,11 @@ test('gopher cinema audio manifest covers 100% of Senior Mode (S01-S18 + Capston
     'LESSON-I03',
     'LESSON-I04',
     'LESSON-I05',
+    'LESSON-I06',
+    'LESSON-I07',
+    'LESSON-I08',
+    'LESSON-I09',
+    'LESSON-I10',
     'LESSON-A01',
     'FRAMEWORKS-OVERVIEW',
   ];
