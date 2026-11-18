@@ -1,5 +1,7 @@
 import { useState } from 'preact/hooks';
 import curriculum from '../../data/curriculum.json';
+import { GopherPlayer } from '../cinema/GopherPlayer';
+import { SENIOR_OVERVIEW_DECK } from '../cinema/storyboards';
 
 type Locale = 'es' | 'en' | 'ja' | 'zh' | 'pt' | 'fr';
 type SeniorCategory = 'all' | 'concurrency' | 'resilience' | 'performance' | 'architecture' | 'operations';
@@ -301,6 +303,10 @@ export function SeniorDashboard({
           <img class="gopher" src={asset('gophers/senior.png')} alt="" />
         </div>
       </header>
+
+      <div class="cinema-senior-wrap" style={{ marginTop: '24px' }}>
+        <GopherPlayer deck={SENIOR_OVERVIEW_DECK} locale={locale} compact />
+      </div>
 
       {/* Unified Filter Bar (Reference Style: Coral Active Pill + Clean Domain Chips) */}
       <div class="senior-toolbar">

@@ -1,0 +1,74 @@
+{
+  "HOME-INTRO": {
+    "src": "audio/home-intro.mp3",
+    "totalSec": 46.62,
+    "cues": [
+      0.45,
+      10.31,
+      22.11,
+      34.6
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "host",
+      "gopher"
+    ]
+  },
+  "SENIOR-OVERVIEW": {
+    "src": "audio/senior-overview.mp3",
+    "totalSec": 34.75,
+    "cues": [
+      0.45,
+      11.36,
+      22.91
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "SENIOR-S01": {
+    "src": "audio/senior-s01.mp3",
+    "totalSec": 35.0,
+    "cues": [
+      0.45,
+      11.11,
+      24.08
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "SENIOR-S02": {
+    "src": "audio/senior-s02.mp3",
+    "totalSec": 34.32,
+    "cues": [
+      0.45,
+      13.07,
+      23.65
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  },
+  "SENIOR-S03": {
+    "src": "audio/senior-s03.mp3",
+    "totalSec": 37.75,
+    "cues": [
+      0.45,
+      11.58,
+      23.83
+    ],
+    "speakers": [
+      "host",
+      "gopher",
+      "gopher"
+    ]
+  }
+}

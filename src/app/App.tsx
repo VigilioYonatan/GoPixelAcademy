@@ -36,6 +36,8 @@ import { goExamples, lessonGuides } from '../data/learning-exercises';
 import { frameworkCurriculum } from '../data/frameworks-curriculum';
 import { gameBank } from '../data/learning-games';
 import { GoCodeBlock, GoCodeEditor, renderTokens } from '../components/GoCode';
+import { GopherPlayer } from '../features/cinema/GopherPlayer';
+import { HOME_INTRO_DECK } from '../features/cinema/storyboards';
 import {
   PixelHomeIcon,
   PixelBookIcon,
@@ -212,7 +214,7 @@ function Home({t,prefs}:{t:(k:string)=>string;prefs:Prefs}) {
   <div class="hero-stars" aria-hidden="true">✦ &nbsp; · &nbsp; ✧ &nbsp; · &nbsp; ✦</div>
   <div class="hero-copy"><div class="eyebrow"><span class="dot"/>{t('heroEyebrow')}</div><h1>Go<span>Pixel</span><br/>Academy</h1><p class="hero-title">{t('heroTitle')}</p><p class="hero-subtitle">{t('heroSubtitle')}</p><div class="hero-ctas"><Button onClick={()=>routeTo('lesson/B01')}><Icon name="play" size={21}/>{t('start')}</Button><Button kind="outline" onClick={()=>routeTo('learn')}>{t('explore')} →</Button></div><div class="hero-metrics"><span><b>54</b> Go</span><span><b>18</b> Senior</span><span><b>8</b> Frameworks</span><span><b>6</b> 🌐</span></div></div>
   <div class="hero-art"><div class="hero-orbit"/><Gopher name="coding" className="hero-gopher"/><div class="code-float"><span class="ide-dots"><i class="dot-r"/><i class="dot-y"/><i class="dot-g"/> &nbsp; main.go</span><code>{renderTokens('func main() {\n  fmt.Println("Go!")\n}', 'go')}</code></div></div>
-  </div><section class="section"><div class="section-heading"><div><span class="eyebrow small">LEARNING MAP</span><h2>{t('featured')}</h2></div><a href="#/learn" class="text-link">{t('showAll')} →</a></div><div class="track-grid">{tracks.map(track=><TrackCard key={track} track={track} t={t} prefs={prefs}/>)}</div></section><section class="feature-banner"><div><span class="senior-kicker">SENIOR MODE · 18 LABS · 90 GATES</span><h2>{prefs.locale==='es'?'Piensa más allá de la sintaxis.':prefs.locale==='en'?'Think beyond syntax.':prefs.locale==='ja'?'構文の先にある設計力を。':prefs.locale==='zh'?'超越语法，直面生产架构。':prefs.locale==='pt'?'Pense além da sintaxe.':'Pensez au-delà de la syntaxe.'}</h2><p>{t('briefHint')}</p><Button kind="senior" onClick={()=>routeTo('senior')}><Icon name="crown" size={18}/>{t('senior')}</Button></div><Gopher name="senior"/></section></>;
+  </div><div id="home-cinema-tour" class="cinema-home-showcase"><GopherPlayer deck={HOME_INTRO_DECK} locale={prefs.locale} /></div><section class="section"><div class="section-heading"><div><span class="eyebrow small">LEARNING MAP</span><h2>{t('featured')}</h2></div><a href="#/learn" class="text-link">{t('showAll')} →</a></div><div class="track-grid">{tracks.map(track=><TrackCard key={track} track={track} t={t} prefs={prefs}/>)}</div></section><section class="feature-banner"><div><span class="senior-kicker">SENIOR MODE · 18 LABS · 90 GATES</span><h2>{prefs.locale==='es'?'Piensa más allá de la sintaxis.':prefs.locale==='en'?'Think beyond syntax.':prefs.locale==='ja'?'構文の先にある設計力を。':prefs.locale==='zh'?'超越语法，直面生产架构。':prefs.locale==='pt'?'Pense além da sintaxe.':'Pensez au-delà de la syntaxe.'}</h2><p>{t('briefHint')}</p><Button kind="senior" onClick={()=>routeTo('senior')}><Icon name="crown" size={18}/>{t('senior')}</Button></div><Gopher name="senior"/></section></>;
 }
 function TrackCard({track,t,prefs}:{track:RouteTrack;t:(k:string)=>string;prefs:Prefs}) {
  const i=trackStyles[track]; const count=track==='senior'?18:12;

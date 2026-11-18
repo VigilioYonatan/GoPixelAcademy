@@ -1,6 +1,8 @@
 import curriculum from '../../data/curriculum.json';
 import seniorChallenges from '../../content/senior/challenges.json';
 import { SeniorSimulationLab } from './SeniorSimulationLab';
+import { GopherPlayer } from '../cinema/GopherPlayer';
+import { getSeniorCinemaDeck } from '../cinema/storyboards';
 
 type Locale = 'es' | 'en' | 'ja' | 'zh' | 'pt' | 'fr';
 
@@ -228,6 +230,7 @@ export function SeniorModuleHub({
 
   const note = notes[moduleId] || '';
   const hasSimulator = ['S03', 'S05', 'S06', 'S07', 'S09', 'S10', 'S11', 'S14', 'S15', 'S18'].includes(moduleId);
+  const cinemaDeck = getSeniorCinemaDeck(moduleId);
 
   const gates = [
     { code: 'G1', label: t.btnQuiz, href: `#/senior/${moduleId}/decision-lab`, res: seniorResults[moduleId] },
@@ -261,6 +264,10 @@ export function SeniorModuleHub({
 
       <div class="senior-lab-grid">
         <div class="senior-lab-main">
+          {cinemaDeck && (
+            <GopherPlayer deck={cinemaDeck} locale={locale} compact />
+          )}
+
           {/* Production Scenario Card */}
           <section class="card scenario-card">
             <div class="scenario-card-header">
