@@ -23,7 +23,7 @@
   "devDependencies": {
     "@preact/preset-vite": "^2.10.2",
     "@types/node": "^26.6.6",
-    "puppeteer-core": "^25.17.0",
+    "puppeteer-core": "^25.18.1",
     "typescript": "^5.9.0",
     "vite": "^7.1.0"
   }
